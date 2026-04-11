@@ -1,0 +1,11 @@
+# MATLAB file temporanei e log
+*.asv
+*.slxc
+*.mex*
+*.mat
+*.log
+!/data/
+
+# Cartelle specifiche di MATLAB
+derivedData/
+slprj/
