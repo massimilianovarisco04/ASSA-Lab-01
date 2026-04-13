@@ -187,7 +187,7 @@ ylabel('Position [m]');
 title ('Cart postion x(t)');
 
 subplot(2,1,2);
-plot(t78, theta78, 'LineWidth',2);
+plot(t78, rad2deg(theta78), 'LineWidth',2);
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle \theta(t)');
@@ -277,7 +277,7 @@ figure (6)
 plot(t_d, u_d, 'LineWidth',2);
 grid on;
 xlabel('Time [s]');
-ylabel('Disturbance [N]');
+ylabel('Disturbance [N/m]');
 title('Disturbance');
 
 % Grafici della soluzione
@@ -471,5 +471,3 @@ subplot(2,1,2)
 plot(tt,rad2deg(yy(:,2)));
 xlabel('t(s)');
 ylabel('\theta (deg)');
-
-CIAO
