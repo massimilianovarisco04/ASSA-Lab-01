@@ -431,6 +431,7 @@ alpha_0 = invpendulumP.alpha_0;
 M = invpendulumP.M;
 kt = invpendulumP.kt;
 r = invpendulumP.r;
+
 A = [0 1 0 0;
     0 -c/(I_0+M-(I_1^2)/I_2) ((I_1^2*g)/I_2)/(I_0+M-(I_1^2)/I_2) (-I_1*b/I_2)/(I_0+M-(I_1^2)/I_2);
     0 0 0 1;
@@ -445,29 +446,29 @@ C = [1 0 0 0;
 D = [0,0;0,0];
 x_0 = [0 0 deg2rad(1) 0]';
 
-t_f = 50;
 
-invpendulumP.sys = ss(A,B,C,D);
-t = 0:0.01:t_f; % Vettore tempo con passo fisso
+t_0 = 0;
+t_f = 1;
+dt = 0.01;
+t = t_0 : dt : t_f;
 
-% Definiamo i due ingressi
-f = zeros(size(t));           % f(t) è sempre zero
-d = (t >= 1) & (t <= 3);      % d(t) vale 1 tra 1 e 3 secondi, altrimenti 0
+y = zeros( length(t),2 );
 
-% Creiamo la matrice degli ingressi u (ogni colonna è un ingresso)
-% u deve avere tante colonne quanti sono gli ingressi del sistema
-u = [f; d]';
+for i = 1 : length(t)
 
-[yy, tt, xx] = lsim(invpendulumP.sys, u, t, x_0);
+    eAt = expm(A * t(i)); % expm fa l'esponenziale di una matrice
+    y(i,:) = C*eAt*x_0;
+
+end
 
 figure(8)
 subplot(2,1,1)
-plot(tt,yy(:,1));
+plot(t,y(:,1));
 xlabel('t(s)');
 ylabel('x (m)');
 grid on;
 hold on;
 subplot(2,1,2)
-plot(tt,rad2deg(yy(:,2)));
+plot(t,rad2deg(y(:,2)));
 xlabel('t(s)');
 ylabel('\theta (deg)');
