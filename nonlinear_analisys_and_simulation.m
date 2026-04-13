@@ -431,6 +431,7 @@ alpha_0 = invpendulumP.alpha_0;
 M = invpendulumP.M;
 kt = invpendulumP.kt;
 r = invpendulumP.r;
+
 A = [0 1 0 0;
     0 -c/(I_0+M-(I_1^2)/I_2) ((I_1^2*g)/I_2)/(I_0+M-(I_1^2)/I_2) (-I_1*b/I_2)/(I_0+M-(I_1^2)/I_2);
     0 0 0 1;
