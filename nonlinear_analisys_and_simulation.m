@@ -11,7 +11,11 @@ t_f = 100;
 
 % Integrazione - soluzione di riferimento
 tic;
-ODE_obj = ode;
+ODE_obj = ode; 
+% ode da matlab 2023 permette di interagire in questo modo con la funzione
+% ODE, in modo da rendere tutto anche più leggibile per chi legge il codice
+% senza averlo fatto. si potrebbe anche fare l'approccio più diretto
+% chiamando direttamente ode45 per esempio, ma questo è meglio. 
 ODE_obj.ODEFcn = @(t,x) invpendulumP_f(t,x,@invpendulum_input, invpendulumP);
 ODE_obj.InitialValue = x_0;
 ODE_obj.Solver = 'ode89';
