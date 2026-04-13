@@ -344,7 +344,7 @@ kt = invpendulumP.kt;
 r = invpendulumP.r;
 T1 = invpendulumP.T1;
 T2 = invpendulumP.T2;
-i = 0;
+i = 0; %è corrente, in anello aperto è sempre nulla.
 if t<T1
     d1 = 0;
 elseif t>T2
@@ -352,11 +352,11 @@ elseif t>T2
 else
     d1 = 1;
 end
-u_c = (kt/r)*i;
+u_c = (kt/r)*i; 
 u_d = d1;
 end
 
-function xdot = invpendulumP_f (t,x, input_fun, invpendulumP)
+function xdot = invpendulumP_f (t,x, input_fun, invpendulumP) %funzione per avere il sistema scritto in spazio di stato
 
 I_1 = invpendulumP.I_1;
 I_2 = invpendulumP.I_2;
@@ -384,7 +384,7 @@ xdot_4 = (I_1*xdot_2*cos(x3)-b*x4+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
 xdot = [xdot_1, xdot_2, xdot_3, xdot_4]';
 end
 
-function xdot_d = invpendulumP_fd (t,x, input_fun, invpendulumP)
+function xdot_d = invpendulumP_fd (t,x, input_fun, invpendulumP) %sistema con disturbo in spazio di stato
 
 I_1 = invpendulumP.I_1;
 I_2 = invpendulumP.I_2;
