@@ -1,0 +1,15 @@
+Commento erik
+1. Definiamo un intorno della posizione di equilibrio (0 gradi). Assumiamo un errore minore dell'1%, che corrisponde a circa 14 gradi. (verifichiamolo con matlab, con un ciclo 
+  per calcolare quando l'errore del nostro sistema diverge dalla soluzione non linearizzata più dell'1%).
+2. Poi plottiamo i grafici con la solzuione linearizzata che arriva come tempo fino a quando theta è minore di quel valore che abbiamo trovato come limite. (dovrebbe essere in
+torno a 14). Scriviamo perchè i grafici divergono all'infinito con il tempo precedente, 
+
+Commento marta
+3. Scegliamo ode78 perchè l'errore assoluto di 45 è troppo alto, sia per angolo che per posizione. 89 lo prendiamo come soluzione benchmark, quella più precisa possibile, perchè ci mette moltissimo. 
+Rimangono 23 e 78, 23 aveva tempo di soluzione più basso e quindi scegliamo quella. Come tolleranze scegliam quelle standard, quelle più basse (e-2, e-3, relativa e assoluta) non approssimano correttamente
+la posizione del carrello, mentre quelle più alte approssimano bene quanto quelle standard, ma hanno tempi di esecuzione molto più alti. 
+4. per la scelta del ode migliore con soluzione forzata, rifacciamo tutti i controlli (esattamente come abbiamo fatto per la risposta libera), e scriviamo le stesse considerazioni.
+NOTA: vediamo se AI dice qualcosa di diverso particolarmente interessante, a cui non abbiamo pensato.
+5. Per fornire l'interpretazione fisica, scriviamo prima nella risposta libera che consideriamo che il sistema è capace di ruotare di 360 gradi, che abbimo scelto noi,
+e che il carrello segue l'inerzia del pendolo, quindi oscilla anche esso. Scriviamo che la risposta è smorzata, quindi all'infinito va a zero, e poi spieghiamo che ha senso che oscilli
+perchè è come l'oscillazione di un pendolo classico, dopo che si trova nella regione con y<0.
