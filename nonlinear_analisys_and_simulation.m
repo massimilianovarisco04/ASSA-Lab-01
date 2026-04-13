@@ -415,3 +415,59 @@ xdot_4 = (I_1*xdot_2*cos(x3)-b*x4+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
 
 xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
 end
+
+
+%% modello linearizzato 
+
+
+I_1 = invpendulumP.I_1;
+I_2 = invpendulumP.I_2;
+I_0 = invpendulumP.I_0;
+b = invpendulumP.b;
+g = invpendulumP.g;
+alpha_1 = invpendulumP.alpha_1;
+c = invpendulumP.c;
+alpha_0 = invpendulumP.alpha_0;
+M = invpendulumP.M;
+kt = invpendulumP.kt;
+r = invpendulumP.r;
+A = [0 1 0 0;
+    0 -c/(I_0+M-(I_1^2)/I_2) ((I_1^2*g)/I_2)/(I_0+M-(I_1^2)/I_2) (-I_1*b/I_2)/(I_0+M-(I_1^2)/I_2);
+    0 0 0 1;
+    0 -c*I_1/(I_2*(I_0+M-(I_1^2)/I_2)) ((I_1^3*g)/I_2)/(I_2*(I_0+M-(I_1^2)/I_2))+(I_1*g)/I_2 (-I_1^2*b/I_2)/(I_2*(I_0+M-(I_1^2)/I_2))-b/I_2];
+B = [0,0;
+    kt/(r*(I_0+M-(I_1^2)/I_2)),((I_1*alpha_1)/I_2-alpha_0)/(I_0+M-(I_1^2)/I_2);
+    0,0;
+    I_1*kt/(r*I_2*(I_0+M-(I_1^2)/I_2)),((I_1^2*alpha_1)/I_2-I_1*alpha_0)/(I_2*(I_0+M-(I_1^2)/I_2))+alpha_1/I_2];
+
+C = [1 0 0 0;
+    0 0 1 0];
+D = [0,0;0,0];
+x_0 = [0 0 deg2rad(1) 0]';
+
+t_f = 50;
+
+invpendulumP.sys = ss(A,B,C,D);
+t = 0:0.01:t_f; % Vettore tempo con passo fisso
+
+% Definiamo i due ingressi
+f = zeros(size(t));           % f(t) è sempre zero
+d = (t >= 1) & (t <= 3);      % d(t) vale 1 tra 1 e 3 secondi, altrimenti 0
+
+% Creiamo la matrice degli ingressi u (ogni colonna è un ingresso)
+% u deve avere tante colonne quanti sono gli ingressi del sistema
+u = [f; d]';
+
+[yy, tt, xx] = lsim(invpendulumP.sys, u, t, x_0);
+
+figure(8)
+subplot(2,1,1)
+plot(tt,yy(:,1));
+xlabel('t(s)');
+ylabel('x (m)');
+grid on;
+hold on;
+subplot(2,1,2)
+plot(tt,rad2deg(yy(:,2)));
+xlabel('t(s)');
+ylabel('\theta (deg)');
