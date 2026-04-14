@@ -527,6 +527,15 @@ legend ('Linear','Non Linear');
 xlabel('t(s)');
 ylabel('\theta (deg)');
 
+%% simulinksss
+x_0_sim = [0,0]';
+
+% grafico
+ex1 = sim("simulink_01.slx");
+
+figure(10)
+plot(ex1.tout,ex1.x);
+grid on
 
 
 
