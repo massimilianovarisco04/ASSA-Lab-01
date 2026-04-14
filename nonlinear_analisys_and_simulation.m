@@ -447,28 +447,106 @@ D = [0,0;0,0];
 x_0 = [0 0 deg2rad(1) 0]';
 
 
-t_0 = 0;
-t_f = 1;
-dt = 0.01;
-t = t_0 : dt : t_f;
+y = zeros( length(t_d),2 );
 
-y = zeros( length(t),2 );
+for i = 1 : length(t_d)
 
-for i = 1 : length(t)
-
-    eAt = expm(A * t(i)); % expm fa l'esponenziale di una matrice
+    eAt = expm(A * t_d(i)); % expm fa l'esponenziale di una matrice
     y(i,:) = C*eAt*x_0;
 
 end
 
 figure(8)
 subplot(2,1,1)
-plot(t,y(:,1));
+plot(t_d,y(:,1));
 xlabel('t(s)');
 ylabel('x (m)');
 grid on;
 hold on;
 subplot(2,1,2)
-plot(t,rad2deg(y(:,2)));
+plot(t_d,rad2deg(y(:,2)));
 xlabel('t(s)');
 ylabel('\theta (deg)');
+
+%% troviamo il theta limite per avere un errore minore dell'1%
+% Calcoliamo la soluzione del sistema non lineare ponendo theta = 1deg,
+% come per il sistema lineare.
+t_f_d = 50;
+x_0_d = [0; 0; deg2rad(1); 0];
+ODE_objd = ode;
+ODE_objd.ODEFcn = @(t,x) invpendulumP_fd(t,x,@invpendulum_input_d, invpendulumP);
+ODE_objd.InitialValue = x_0_d;
+ODE_objd.Solver = 'ode78';
+ODEResults_obj = solve(ODE_objd, t_0, t_f_d);
+t_d = ODEResults_obj.Time';
+x_d = ODEResults_obj.Solution'; 
+
+% Calcolo la soluzione lineare con il vettore dei tempi del non lineare
+y = zeros( length(t_d),2 );
+for i = 1 : length(t_d)
+
+    eAt = expm(A * t_d(i)); % expm fa l'esponenziale di una matrice
+    y(i,:) = C*eAt*x_0;
+
+end
+
+% definizione parametri per ciclo while
+theta_d = x_d(:,3);
+tol = 1e-2;
+err = 0;
+theta_lim = 0;
+j = 0;
+t_lim = 0;
+
+% ciclo while per calcolare l'errore relativo tra la soluzione lineare e
+% non lineare (metto in gradi perchè ho messo la tolleranza sull'angolo in
+% gradi)
+while err < tol
+    j = j + 1;
+    y (j,2) = rad2deg(y(j,2));
+    theta_d(j) = rad2deg(theta_d(j));
+    err = abs (y(j,2)-theta_d(j))/theta_d(j);
+    theta_lim = y(j,2);
+    t_lim = t_d(j);
+end
+
+% vettore dei tempi fino a t_lim (scelgo j-1 perchè è il valore prima che 
+% la soluzione superi la tolleranza) 
+t_lin = zeros(1,j-1);
+for ii = 1 : j-1
+    t_lin(ii) = t_d(ii);
+end
+
+% plot lineare vs non lineare 
+figure('Name','Linear vs Non Linear')
+plot(t_lin,y(1:1:j-1,2));
+hold on 
+grid on
+plot (t_lin, theta_d(1:1:j-1));
+legend ('Linear','Non Linear');
+xlabel('t(s)');
+ylabel('\theta (deg)');
+
+%% simulinksss
+x_0_sim = [0,0]';
+
+% grafico
+ex1 = sim("simulink_01.slx");
+
+figure(10)
+subplot(2,1,1);
+title('Position Cart');
+plot(ex1.tout,ex1.x);
+xlabel('t(s)');
+ylabel('x (m)');
+
+grid on;
+subplot(2,1,2);
+title('Pendulum Angle')
+plot(ex1.tout,ex1.theta);
+xlabel('t(s)');
+ylabel('\theta (deg)');
+
+
+
+
