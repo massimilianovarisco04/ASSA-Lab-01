@@ -534,8 +534,19 @@ x_0_sim = [0,0]';
 ex1 = sim("simulink_01.slx");
 
 figure(10)
+subplot(2,1,1);
+title('Position Cart');
 plot(ex1.tout,ex1.x);
-grid on
+xlabel('t(s)');
+ylabel('x (m)');
+
+grid on;
+subplot(2,1,2);
+title('Pendulum Angle')
+plot(ex1.tout,ex1.theta);
+xlabel('t(s)');
+ylabel('\theta (deg)');
+
 
 
 
