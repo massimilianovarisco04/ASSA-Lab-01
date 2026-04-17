@@ -677,7 +677,7 @@ for i = 1 : length(t78_d)
 
 end
 
-figure(12)
+figure()
 subplot(2,1,1)
 plot(t78_d,y(:,1));
 xlabel('t(s)');
@@ -703,10 +703,10 @@ t_d = ODEResults_obj.Time';
 x_d = ODEResults_obj.Solution'; 
 
 % Calcolo la soluzione lineare con il vettore dei tempi del non lineare
-y = zeros( length(t78_d),2 );
-for i = 1 : length(t78_d)
+y = zeros( length(t_d),2 );
+for i = 1 : length(t_d)
 
-    eAt = expm(A * t78_d(i)); % expm fa l'esponenziale di una matrice
+    eAt = expm(A * t_d(i)); % expm fa l'esponenziale di una matrice
     y(i,:) = C*eAt*x_0;
 
 end
@@ -754,7 +754,7 @@ x_0_sim = [0,0]';
 % grafico
 ex1 = sim("simulink_01.slx");
 
-figure(13)
+figure()
 subplot(2,1,1);
 title('Position Cart');
 plot(ex1.tout,ex1.x);
@@ -767,11 +767,11 @@ title('Pendulum Angle')
 plot(ex1.tout,ex1.theta);
 xlabel('t(s)');
 ylabel('\theta (deg)');
-
+grid on;
 % grafico linearizzato
 ex2 = sim("simulink_01_linearizzatp.slx");
 
-figure(11)
+figure()
 subplot(2,1,1);
 title('Position Cart');
 plot(ex2.tout,ex2.x_lin);
@@ -790,7 +790,7 @@ ex3 = sim("simulink_01_nonlineare_per_confronto_con_lineare.slx");
 
 % lineare vs non lineare in simulink
 
-figure(12)
+figure()
 plot(ex3.tout,rad2deg(ex3.theta));
 hold on
 grid on
@@ -816,3 +816,65 @@ B = [0,0;
 C = [1 0 0 0;
     0 0 1 0];
 D = [0,0;0,0];
+invpendulumP.sys = ss(A,B,C,D);
+[yy,tt] = initial(invpendulumP.sys,x_0,0.7);
+
+figure()
+subplot(2,1,1);
+title('Position Cart');
+plot(tt,yy(:,1));
+xlabel('t(s)');
+ylabel('x (m)');
+hold on;
+plot(t_lin,y(1:1:j-1,1));
+grid on;
+legend("Frictionless","Friction")
+
+subplot(2,1,2);
+title('Pendulum Angle')
+plot(tt,rad2deg(yy(:,2)));
+grid on;
+hold on; 
+plot(t_lin,y(1:1:j-1,2));
+xlabel('t(s)');
+ylabel('\theta (deg)');
+legend("Frictionless","Friction")
+% nell'intorno del punto di equlibrio instabile, dove vale l'approssimazione lineare,
+% il sistema senza attriti rimane identico a quello con, per poi divergere
+% piu rapidamente verso l'infinito( causa: no attriti)
+
+%% task 4.4 TRASFER FUNCTIONS
+% For the frictionless linear model derived in the previous step, derive the
+% symbolic expression of the following transfer functions (with inputs i(t),
+% d(t) and outputs x(t), θ(t))
+
+sys = ss(A, B, C, D);
+
+% Converti in funzione di trasferimento G(s)
+G = tf(sys);
+
+G_x_i = G(1,1);
+G_x_d = G(2,1);
+G_theta_i = G(1,2);
+G_theta_d = G(2,2);
+
+%% task 4.5 POLE-ZERO ANALYSIS
+%Using the numerical values of the parameters, compute and plot the pole
+%zero maps of the transfer functions.
+%Comment on the stability and dynamic properties of the system
+
+figure()
+subplot(2,2,1)
+pzmap(G_x_i);
+title('G_{x i}')
+subplot(2,2,2)
+pzmap(G_x_d);
+title('G_{x d}')
+subplot(2,2,3)
+pzmap(G_theta_i);
+title('G_{\theta i}')
+subplot(2,2,4)
+pzmap(G_theta_d);
+title('G_{\theta d}')
+
+%  tutti con  almeno un polo con parte reale positiva [GAME OVER]
