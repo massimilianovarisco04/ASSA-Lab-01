@@ -547,6 +547,34 @@ plot(ex1.tout,ex1.theta);
 xlabel('t(s)');
 ylabel('\theta (deg)');
 
+% grafico linearizzato
+ex2 = sim("simulink_01_linearizzatp.slx");
+
+figure(11)
+subplot(2,1,1);
+title('Position Cart');
+plot(ex2.tout,ex2.x_lin);
+xlabel('t(s)');
+ylabel('x (m)');
+
+grid on;
+subplot(2,1,2);
+title('Pendulum Angle')
+plot(ex2.tout,ex2.theta_lin);
+xlabel('t(s)');
+ylabel('\theta (deg)');
+
+ex3 = sim("simulink_01_nonlineare_per_confronto_con_lineare.slx");
+
+
+% lineare vs non lineare in simulink
+
+figure(12)
+plot(ex3.tout,ex3.x);
+hold on
+grid on
+plot(ex2.tout,ex2.x_lin);
+legend("non linear","linear");
 
 %% task 4.3
 c = 0;
