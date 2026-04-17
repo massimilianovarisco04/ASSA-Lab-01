@@ -425,15 +425,15 @@ ylabel('Time of execution');
 xlabel('Solver');
 title('Times of execution');
 
-%% Soluzione con Ode78
+%% DISTURBO - Soluzione con Ode23
 % Grafico del disturbo
-u_c = zeros(length(t78_d), 1);
-u_d = zeros(length(t78_d), 1);
-for i = 1 : length(t78_d)
-    [u_c(i), u_d(i)] = invpendulum_input_d(t78_d(i), invpendulumP);
+u_c = zeros(length(t23_d), 1);
+u_d = zeros(length(t23_d), 1);
+for i = 1 : length(t23_d)
+    [u_c(i), u_d(i)] = invpendulum_input_d(t23_d(i), invpendulumP);
 end
 figure (8)
-plot(t78_d, u_d, 'LineWidth',2);
+plot(t23_d, u_d, 'LineWidth',2);
 grid on;
 xlabel('Time [s]');
 ylabel('Disturbance [N/m]');
@@ -442,76 +442,76 @@ title('Disturbance');
 % Grafici della soluzione
 figure(9)
 subplot(2,1,1);
-plot(t78_d, xcart78_d, 'LineWidth',2);
+plot(t23_d, xcart23_d, 'LineWidth',2);
 xlabel('Time [s]');
 ylabel('Position [m]');
 title ('Cart postion with disturbance x(t)');
 
 subplot(2,1,2);
-plot(t78_d, rad2deg(theta78_d), 'LineWidth',2);
+plot(t23_d, rad2deg(theta23_d), 'LineWidth',2);
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle with disturbance \theta(t)');
 
-%% Sensibilità alle tolleranze
+%% DISTURBO - Sensibilità alle tolleranze
 % Integrazione con tolleranze di riferimento (RelTol = 1e-3, AbsTol=1e-6)
 % Integrazione con valori di tolleranza più alti (RelTol=1e-6,AbsTol=1e-9)
 tic;
 ODE_obj4 = ode;
 ODE_obj4.ODEFcn = @(t,x) invpendulumP_f(t,x,@invpendulum_input_d, invpendulumP);
 ODE_obj4.InitialValue = x_0_d;
-ODE_obj4.Solver = 'ode78';
+ODE_obj4.Solver = 'ode23';
 ODE_obj4.AbsoluteTolerance = 1e-9;
 ODE_obj4.RelativeTolerance = 1e-6;
 ODEResults_obj = solve(ODE_obj4, t_0_d, t_f_d);
-t78_1_d = ODEResults_obj.Time';
-x78_1_d = ODEResults_obj.Solution'; 
-xcart78_1_d = x78_1_d(:,1);
-theta78_1_d = x78_1_d(:,3);
-t_es_78_1_d = toc;
+t23_1_d = ODEResults_obj.Time';
+x23_1_d = ODEResults_obj.Solution'; 
+xcart23_1_d = x23_1_d(:,1);
+theta23_1_d = x23_1_d(:,3);
+t_es_23_1_d = toc;
 
 % Integrazione con valori di tolleranza più bassi (RelTol=1e-2,AbsTol=1e-3);
 tic;
 ODE_obj5 = ode;
 ODE_obj5.ODEFcn = @(t,x) invpendulumP_f(t,x,@invpendulum_input_d, invpendulumP);
 ODE_obj5.InitialValue = x_0_d;
-ODE_obj5.Solver = 'ode78';
+ODE_obj5.Solver = 'ode23';
 ODE_obj5.AbsoluteTolerance = 1e-3;
 ODE_obj5.RelativeTolerance = 1e-2;
 ODEResults_obj = solve(ODE_obj5, t_0_d, t_f_d);
-t78_2_d = ODEResults_obj.Time';
-x78_2_d = ODEResults_obj.Solution'; 
-xcart78_2_d = x78_2_d(:,1);
-theta78_2_d = x78_2_d(:,3);
-t_es_78_2_d = toc;
+t23_2_d = ODEResults_obj.Time';
+x23_2_d = ODEResults_obj.Solution'; 
+xcart23_2_d = x23_2_d(:,1);
+theta23_2_d = x23_2_d(:,3);
+t_es_23_2_d = toc;
 
 % Confronto tra risultati
 figure (10)
 subplot(2,1,1)
-plot(t78_d, xcart78_d, 'k', 'LineWidth',2);
+plot(t23_d, xcart23_d, 'k', 'LineWidth',2);
 hold on;
-plot(t78_1_d, xcart78_1_d, 'r', 'LineWidth',2);
-plot(t78_2_d, xcart78_2_d, 'b', 'LineWidth',2);
+plot(t23_1_d, xcart23_1_d, 'r', 'LineWidth',2);
+plot(t23_2_d, xcart23_2_d, 'b', 'LineWidth',2);
 xlabel('Time [s]');
 ylabel('Cart position [m]');
 legend('Standard tolerances', 'Tighter tolerances', 'Looser tolerances');
 title('Tolerance comparison for cart position with disturbance');
 
 subplot(2,1,2);
-plot(t78_d, rad2deg(theta78_d), 'k', 'LineWidth',2);
+plot(t23_d, rad2deg(theta23_d), 'k', 'LineWidth',2);
 hold on;
-plot(t78_1_d, rad2deg(theta78_1_d), 'r', 'LineWidth',2);
-plot(t78_2_d, rad2deg(theta78_2_d), 'b', 'LineWidth',2);
+plot(t23_1_d, rad2deg(theta23_1_d), 'r', 'LineWidth',2);
+plot(t23_2_d, rad2deg(theta23_2_d), 'b', 'LineWidth',2);
 xlabel('Time[s]');
 ylabel('Pendulum angle [°]');
 legend('Standard tolerances', 'Tighter tolerances', 'Looser tolerances');
 title('Tolerance comparison for pendulum angle with disturbance');
 
 % Tempi di esecuzione con diverse tolleranze
-figure(11)
-t_es = [t_es_78_d, t_es_78_1_d, t_es_78_2_d];
+figure(14)
+t_es_d_t = [t_es_23_d, t_es_23_1_d, t_es_23_2_d];
 labels = {'Standard tolerances', 'Tighter tolerances', 'Looser tolerances'};
-bar(t_es);
+bar(t_es_d_t);
 set(gca, 'XTickLabel', labels);
 title('Times of execution');
 
@@ -668,24 +668,24 @@ D = [0,0;0,0];
 x_0 = [0 0 deg2rad(1) 0]';
 
 
-y = zeros( length(t78_d),2 );
+y = zeros( length(t23_d),2 );
 
-for i = 1 : length(t78_d)
+for i = 1 : length(t23_d)
 
-    eAt = expm(A * t78_d(i)); % expm fa l'esponenziale di una matrice
+    eAt = expm(A * t23_d(i)); % expm fa l'esponenziale di una matrice
     y(i,:) = C*eAt*x_0;
 
 end
 
 figure(12)
 subplot(2,1,1)
-plot(t78_d,y(:,1));
+plot(t23_d,y(:,1));
 xlabel('t(s)');
 ylabel('x (m)');
 grid on;
 hold on;
 subplot(2,1,2)
-plot(t78_d,rad2deg(y(:,2)));
+plot(t23_d,rad2deg(y(:,2)));
 xlabel('t(s)');
 ylabel('\theta (deg)');
 
@@ -703,10 +703,10 @@ t_d = ODEResults_obj.Time';
 x_d = ODEResults_obj.Solution'; 
 
 % Calcolo la soluzione lineare con il vettore dei tempi del non lineare
-y = zeros( length(t78_d),2 );
-for i = 1 : length(t78_d)
+y = zeros( length(t_d),2 );
+for i = 1 : length(t_d)
 
-    eAt = expm(A * t78_d(i)); % expm fa l'esponenziale di una matrice
+    eAt = expm(A * t_d(i)); % expm fa l'esponenziale di una matrice
     y(i,:) = C*eAt*x_0;
 
 end
