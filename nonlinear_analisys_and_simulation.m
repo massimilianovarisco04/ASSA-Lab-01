@@ -570,11 +570,15 @@ ex3 = sim("simulink_01_nonlineare_per_confronto_con_lineare.slx");
 % lineare vs non lineare in simulink
 
 figure(12)
-plot(ex3.tout,ex3.x);
+plot(ex3.tout,rad2deg(ex3.theta));
 hold on
 grid on
-plot(ex2.tout,ex2.x_lin);
+plot(ex2.tout,rad2deg(ex2.theta_lin));
+xlim([0 0.7]);
+ylim([0 20]);
 legend("non linear","linear");
+xlabel('t(s)');
+ylabel('\theta (deg)');
 
 %% task 4.3
 c = 0;
