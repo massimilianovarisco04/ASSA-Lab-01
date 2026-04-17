@@ -93,7 +93,7 @@ subplot(3,2,3)
 plot(tt, xcart_rif, 'k', 'LineWidth', 2);
 hold on;
 plot(t23, xcart23, 'r', 'LineWidth',2);
-xlabel(['Time [s]']);
+xlabel('Time [s]');
 ylabel('Position [m]');
 legend ('Benchmark solution', 'Ode23', 'Location','southeast');
 title ('Cart position - rif vs ode23');
@@ -155,18 +155,17 @@ plot(t78, err_78, 'LineWidth',2);
 legend ('err45', 'err23', 'err78');
 xlabel('Time [s]');
 ylabel('Absolute error');
-title ('absolute errors - positions');
+title ('absolute errors - Cart position');
 
 subplot(3,1,2)
 plot(t45, errtheta_45, 'LineWidth',2);
 hold on;
 plot(t23, errtheta_23, 'LineWidth',2);
 plot(t78, errtheta_78, 'LineWidth', 2);
-xlim([0, 10]);
 xlabel('Time [s]');
 ylabel('Absolute error');
 legend ('err45', 'err23', 'err78');
-title ('absolute errors - angles');
+title ('absolute errors - pendulum angle');
 
 % Calcolo tempi di esecuzione
 t_es = [t_es_rif, t_es_45, t_es_23, t_es_78];
@@ -233,7 +232,7 @@ plot(t78_1, xcart78_1, 'r', 'LineWidth',2);
 plot(t78_2, xcart78_2, 'b', 'LineWidth',2);
 xlabel('Time [s]');
 ylabel('Cart position [m]');
-legend('Standard tolerances', 'Higher tolerances', 'Lower tolerances');
+legend('Standard tolerances', 'Tighter tolerances', 'Looser tolerances');
 title('Tolerance comparison for cart position');
 
 subplot(2,1,2);
@@ -243,56 +242,278 @@ plot(t78_1, rad2deg(theta78_1), 'r', 'LineWidth',2);
 plot(t78_2, rad2deg(theta78_2), 'b', 'LineWidth',2);
 xlabel('Time[s]');
 ylabel('Pendulum angle [°]');
-legend('Standard tolerances', 'Higher tolerances', 'Lower tolerances');
+legend('Standard tolerances', 'Tighter tolerances', 'Looser tolerances');
 title('Tolerance comparison for pendulum angle');
 
 % Tempi di esecuzione con diverse tolleranze
 figure(5)
 t_es = [t_es_78, t_es_78_1, t_es_78_2];
-labels = {'Standard tolerances', 'Higher tolerances', 'Lower tolerances'};
+labels = {'Standard tolerances', 'Tighter tolerances', 'Looser tolerances'};
 bar(t_es);
 set(gca, 'XTickLabel', labels);
 title('Times of execution');
 
-%% Soluzione con disturbo
-t_f_d = 50;
+%% DISTURBO - Scelta qualitativa del metodo di integrazione
+% Parametri e condizioni iniziali
+invpendulumP = invpendulum_parameters ();
 x_0_d = [0; 0; 0; 0];
-ODE_objd = ode;
-ODE_objd.ODEFcn = @(t,x) invpendulumP_fd(t,x,@invpendulum_input_d, invpendulumP);
-ODE_objd.InitialValue = x_0_d;
-ODE_objd.Solver = 'ode78';
-ODEResults_obj = solve(ODE_objd, t_0, t_f_d);
-t_d = ODEResults_obj.Time';
-x_d = ODEResults_obj.Solution'; 
-xcart_d = x_d(:,1);
-theta_d = x_d(:,3);
+t_0_d = 0;
+t_f_d = 50;
 
+% DISTURBO Integrazione - soluzione di riferimento
+tic;
+ODE_obj = ode; 
+% ode da matlab 2023 permette di interagire in questo modo con la funzione
+% ODE, in modo da rendere tutto anche più leggibile per chi legge il codice
+% senza averlo fatto. si potrebbe anche fare l'approccio più diretto
+% chiamando direttamente ode45 per esempio, ma questo è meglio. 
+ODE_obj.ODEFcn = @(t,x) invpendulumP_f(t,x,@invpendulum_input_d, invpendulumP);
+ODE_obj.InitialValue = x_0_d;
+ODE_obj.Solver = 'ode89';
+ODE_obj.AbsoluteTolerance = 1e-12;
+ODE_obj.RelativeTolerance = 1e-9;
+ODEResults_obj = solve(ODE_obj, t_0_d, t_f_d);
+tt_d = ODEResults_obj.Time'; 
+xx_d = ODEResults_obj.Solution'; 
+xcart_rif_d = xx_d(:,1);
+theta_rif_d= xx_d(:,3);
+t_es_rif_d = toc;
+
+% Ode45
+tic;
+ODE_obj1 = ode;
+ODE_obj1.ODEFcn = @(t,x) invpendulumP_f(t,x,@invpendulum_input_d, invpendulumP);
+ODE_obj1.InitialValue = x_0_d;
+ODE_obj1.Solver = 'ode45';
+ODEResults_obj = solve(ODE_obj1, t_0_d, t_f_d);
+t45_d = ODEResults_obj.Time';
+x45_d = ODEResults_obj.Solution'; 
+xcart45_d = x45_d(:,1);
+theta45_d= x45_d(:,3);
+t_es_45_d = toc;
+
+% Ode23
+tic;
+ODE_obj2 = ode;
+ODE_obj2.ODEFcn = @(t,x) invpendulumP_f(t,x,@invpendulum_input_d, invpendulumP);
+ODE_obj2.InitialValue = x_0_d;
+ODE_obj2.Solver = 'ode23';
+ODEResults_obj = solve(ODE_obj2, t_0_d, t_f_d);
+t23_d = ODEResults_obj.Time';
+x23_d = ODEResults_obj.Solution'; 
+xcart23_d = x23_d(:,1);
+theta23_d = x23_d(:,3);
+t_es_23_d = toc;
+
+% Ode78
+tic;
+ODE_obj3 = ode;
+ODE_obj3.ODEFcn = @(t,x) invpendulumP_f(t,x,@invpendulum_input_d, invpendulumP);
+ODE_obj3.InitialValue = x_0_d;
+ODE_obj3.Solver = 'ode78';
+ODEResults_obj = solve(ODE_obj3, t_0_d, t_f_d);
+t78_d = ODEResults_obj.Time';
+x78_d = ODEResults_obj.Solution'; 
+xcart78_d = x78_d(:,1);
+theta78_d = x78_d(:,3);
+t_es_78_d = toc;
+
+% DISTURBO Grafico - confronto tra riferimento e ode45
+figure(6)
+subplot(3, 2, 1)
+plot(tt_d, xcart_rif_d, 'k', 'LineWidth', 2);
+hold on;
+plot(t45_d, xcart45_d, 'r', 'LineWidth',2);
+xlabel('Time [s]');
+ylabel('Position [m]');
+legend('Benchmark solution', 'Ode45', 'Location','southeast')
+title ('Cart position with disturbance - rif vs ode45');
+
+subplot(3,2,2)
+plot(tt_d, rad2deg(theta_rif_d), 'k', 'LineWidth',2);
+hold on;
+plot(t45_d, rad2deg(theta45_d), 'r', 'LineWidth', 2);
+xlabel('Time [s]');
+ylabel('Pendulum angle [°]');
+legend('Benchmark solution', 'Ode45', 'Location','southeast');
+title ('Pendulum angle with disturbance - rif vs ode45');
+
+% DISTURBO Grafico - confronto tra riferimento e ode23
+subplot(3,2,3)
+plot(tt_d, xcart_rif_d, 'k', 'LineWidth', 2);
+hold on;
+plot(t23_d, xcart23_d, 'r', 'LineWidth',2);
+xlabel('Time [s]');
+ylabel('Position [m]');
+legend ('Benchmark solution', 'Ode23', 'Location','southeast');
+title ('Cart position with disturbance - rif vs ode23');
+
+subplot(3,2,4)
+plot(tt_d, rad2deg(theta_rif_d), 'k', 'LineWidth',2);
+hold on;
+plot(t23_d, rad2deg(theta23_d), 'r', 'LineWidth', 2);
+xlabel('Time [s]');
+ylabel('Pendulum angle [°]');
+legend('Benchmark solution', 'Ode23', 'Location','southeast');
+title ('Pendulum angle with disturbance - rif vs ode23');
+
+% DISTURBO Grafico - confronto tra riferimento e ode78
+subplot(3,2,5)
+plot(tt_d, xcart_rif_d, 'k', 'LineWidth', 2);
+hold on;
+plot(t78_d, xcart78_d, 'r', 'LineWidth',2);
+xlabel('Time [s]');
+ylabel('Cart position [m]');
+legend('Benchmark solution', 'Ode78', 'Location','southeast');
+title ('Cart position with disturbance - rif vs ode78');
+
+subplot(3,2,6)
+plot(tt_d, rad2deg(theta_rif_d), 'k', 'LineWidth',2);
+hold on;
+plot(t78_d, rad2deg(theta78_d), 'r', 'LineWidth', 2);
+xlabel('Time [s]');
+ylabel('Pendulum angle [°]');
+legend('Benchmark solution','Ode78', 'Location','southeast');
+title ('Pendulum angle with disturbance - rif vs ode78');
+
+%% DISTURBO - Scelta quantitativa del metodo di integrazione 
+
+% DISTURBO Calcolo errori assoluti
+xcart_rif45_d = interp1(tt_d, xcart_rif_d, t45_d);
+xcart_rif23_d = interp1(tt_d, xcart_rif_d, t23_d);
+xcart_rif78_d = interp1(tt_d, xcart_rif_d, t78_d);
+theta_rif45_d = interp1(tt_d, theta_rif_d, t45_d);
+theta_rif23_d = interp1(tt_d, theta_rif_d, t23_d);
+theta_rif78_d = interp1(tt_d, theta_rif_d, t78_d);
+
+err_45_d = abs(xcart_rif45_d - xcart45_d);
+err_23_d = abs(xcart_rif23_d - xcart23_d);
+err_78_d = abs(xcart_rif78_d - xcart78_d);
+
+errtheta_45_d = abs(theta_rif45_d - theta45_d);
+errtheta_23_d = abs(theta_rif23_d - theta23_d);
+errtheta_78_d = abs(theta_rif78_d - theta78_d);
+
+figure(7)
+subplot(3, 1, 1)
+plot(t45_d, err_45_d, 'LineWidth',2);
+hold on;
+plot(t23_d,err_23_d, 'LineWidth',2);
+plot(t78_d, err_78_d, 'LineWidth',2);
+legend ('err45', 'err23', 'err78');
+xlabel('Time [s]');
+ylabel('Absolute error');
+title ('absolute errors - Cart position with disturbance');
+
+subplot(3,1,2)
+plot(t45_d, errtheta_45_d, 'LineWidth',2);
+hold on;
+plot(t23_d, errtheta_23_d, 'LineWidth',2);
+plot(t78_d, errtheta_78_d, 'LineWidth', 2);
+xlabel('Time [s]');
+ylabel('Absolute error');
+legend ('err45', 'err23', 'err78');
+title ('absolute errors - pendulum angle with disturbance');
+
+% Calcolo tempi di esecuzione
+t_es_d = [t_es_rif_d, t_es_45_d, t_es_23_d, t_es_78_d];
+labels = {'Benchmark solution', 'Ode45', 'Ode23', 'Ode78'};
+subplot(3,1,3);
+bar(t_es_d);
+set(gca, 'XTickLabel', labels);
+ylabel('Time of execution');
+xlabel('Solver');
+title('Times of execution');
+
+%% Soluzione con Ode78
 % Grafico del disturbo
-u_c = zeros(length(t_d), 1);
-u_d = zeros(length(t_d), 1);
-for i = 1 : length(t_d)
-    [u_c(i), u_d(i)] = invpendulum_input_d(t_d(i), invpendulumP);
+u_c = zeros(length(t78_d), 1);
+u_d = zeros(length(t78_d), 1);
+for i = 1 : length(t78_d)
+    [u_c(i), u_d(i)] = invpendulum_input_d(t78_d(i), invpendulumP);
 end
-figure (6)
-plot(t_d, u_d, 'LineWidth',2);
+figure (8)
+plot(t78_d, u_d, 'LineWidth',2);
 grid on;
 xlabel('Time [s]');
 ylabel('Disturbance [N/m]');
 title('Disturbance');
 
 % Grafici della soluzione
-figure(7)
-subplot(2,1,1)
-plot(t_d, xcart_d, 'LineWidth',2);
+figure(9)
+subplot(2,1,1);
+plot(t78_d, xcart78_d, 'LineWidth',2);
 xlabel('Time [s]');
-ylabel('Cart postion [m]');
-title('Cart position with disturbance');
+ylabel('Position [m]');
+title ('Cart postion with disturbance x(t)');
 
-subplot(2,1,2)
-plot(t_d, rad2deg(theta_d), 'LineWidth',2);
+subplot(2,1,2);
+plot(t78_d, rad2deg(theta78_d), 'LineWidth',2);
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
-title('Pendulum angle with disturbance');
+title('Pendulum angle with disturbance \theta(t)');
+
+%% Sensibilità alle tolleranze
+% Integrazione con tolleranze di riferimento (RelTol = 1e-3, AbsTol=1e-6)
+% Integrazione con valori di tolleranza più alti (RelTol=1e-6,AbsTol=1e-9)
+tic;
+ODE_obj4 = ode;
+ODE_obj4.ODEFcn = @(t,x) invpendulumP_f(t,x,@invpendulum_input_d, invpendulumP);
+ODE_obj4.InitialValue = x_0_d;
+ODE_obj4.Solver = 'ode78';
+ODE_obj4.AbsoluteTolerance = 1e-9;
+ODE_obj4.RelativeTolerance = 1e-6;
+ODEResults_obj = solve(ODE_obj4, t_0_d, t_f_d);
+t78_1_d = ODEResults_obj.Time';
+x78_1_d = ODEResults_obj.Solution'; 
+xcart78_1_d = x78_1_d(:,1);
+theta78_1_d = x78_1_d(:,3);
+t_es_78_1_d = toc;
+
+% Integrazione con valori di tolleranza più bassi (RelTol=1e-2,AbsTol=1e-3);
+tic;
+ODE_obj5 = ode;
+ODE_obj5.ODEFcn = @(t,x) invpendulumP_f(t,x,@invpendulum_input_d, invpendulumP);
+ODE_obj5.InitialValue = x_0_d;
+ODE_obj5.Solver = 'ode78';
+ODE_obj5.AbsoluteTolerance = 1e-3;
+ODE_obj5.RelativeTolerance = 1e-2;
+ODEResults_obj = solve(ODE_obj5, t_0_d, t_f_d);
+t78_2_d = ODEResults_obj.Time';
+x78_2_d = ODEResults_obj.Solution'; 
+xcart78_2_d = x78_2_d(:,1);
+theta78_2_d = x78_2_d(:,3);
+t_es_78_2_d = toc;
+
+% Confronto tra risultati
+figure (10)
+subplot(2,1,1)
+plot(t78_d, xcart78_d, 'k', 'LineWidth',2);
+hold on;
+plot(t78_1_d, xcart78_1_d, 'r', 'LineWidth',2);
+plot(t78_2_d, xcart78_2_d, 'b', 'LineWidth',2);
+xlabel('Time [s]');
+ylabel('Cart position [m]');
+legend('Standard tolerances', 'Tighter tolerances', 'Looser tolerances');
+title('Tolerance comparison for cart position with disturbance');
+
+subplot(2,1,2);
+plot(t78_d, rad2deg(theta78_d), 'k', 'LineWidth',2);
+hold on;
+plot(t78_1_d, rad2deg(theta78_1_d), 'r', 'LineWidth',2);
+plot(t78_2_d, rad2deg(theta78_2_d), 'b', 'LineWidth',2);
+xlabel('Time[s]');
+ylabel('Pendulum angle [°]');
+legend('Standard tolerances', 'Tighter tolerances', 'Looser tolerances');
+title('Tolerance comparison for pendulum angle with disturbance');
+
+% Tempi di esecuzione con diverse tolleranze
+figure(11)
+t_es = [t_es_78_d, t_es_78_1_d, t_es_78_2_d];
+labels = {'Standard tolerances', 'Tighter tolerances', 'Looser tolerances'};
+bar(t_es);
+set(gca, 'XTickLabel', labels);
+title('Times of execution');
 
 %% Definizione funzioni
 function invpendulumP = invpendulum_parameters()
@@ -447,24 +668,24 @@ D = [0,0;0,0];
 x_0 = [0 0 deg2rad(1) 0]';
 
 
-y = zeros( length(t_d),2 );
+y = zeros( length(t78_d),2 );
 
-for i = 1 : length(t_d)
+for i = 1 : length(t78_d)
 
-    eAt = expm(A * t_d(i)); % expm fa l'esponenziale di una matrice
+    eAt = expm(A * t78_d(i)); % expm fa l'esponenziale di una matrice
     y(i,:) = C*eAt*x_0;
 
 end
 
-figure(8)
+figure(12)
 subplot(2,1,1)
-plot(t_d,y(:,1));
+plot(t78_d,y(:,1));
 xlabel('t(s)');
 ylabel('x (m)');
 grid on;
 hold on;
 subplot(2,1,2)
-plot(t_d,rad2deg(y(:,2)));
+plot(t78_d,rad2deg(y(:,2)));
 xlabel('t(s)');
 ylabel('\theta (deg)');
 
@@ -482,10 +703,10 @@ t_d = ODEResults_obj.Time';
 x_d = ODEResults_obj.Solution'; 
 
 % Calcolo la soluzione lineare con il vettore dei tempi del non lineare
-y = zeros( length(t_d),2 );
-for i = 1 : length(t_d)
+y = zeros( length(t78_d),2 );
+for i = 1 : length(t78_d)
 
-    eAt = expm(A * t_d(i)); % expm fa l'esponenziale di una matrice
+    eAt = expm(A * t78_d(i)); % expm fa l'esponenziale di una matrice
     y(i,:) = C*eAt*x_0;
 
 end
@@ -533,7 +754,7 @@ x_0_sim = [0,0]';
 % grafico
 ex1 = sim("simulink_01.slx");
 
-figure(10)
+figure(13)
 subplot(2,1,1);
 title('Position Cart');
 plot(ex1.tout,ex1.x);
