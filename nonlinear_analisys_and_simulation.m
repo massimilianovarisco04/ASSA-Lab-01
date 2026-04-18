@@ -667,7 +667,7 @@ C = [1 0 0 0;
 D = [0,0;0,0];
 x_0 = [0 0 deg2rad(1) 0]';
 
-
+eig_A = eig(A)
 y = zeros( length(t23_d),2 );
 
 for i = 1 : length(t23_d)
@@ -784,7 +784,7 @@ title('Pendulum Angle')
 plot(ex2.tout,ex2.theta_lin);
 xlabel('t(s)');
 ylabel('\theta (deg)');
-
+grid on;
 ex3 = sim("simulink_01_nonlineare_per_confronto_con_lineare.slx");
 
 
@@ -812,7 +812,7 @@ B = [0,0;
     kt/(r*(I_0+M-(I_1^2)/I_2)),((I_1*alpha_1)/I_2-alpha_0)/(I_0+M-(I_1^2)/I_2);
     0,0;
     I_1*kt/(r*I_2*(I_0+M-(I_1^2)/I_2)),((I_1^2*alpha_1)/I_2-I_1*alpha_0)/(I_2*(I_0+M-(I_1^2)/I_2))+alpha_1/I_2];
-
+eig_A_no_f  =eig(A)
 C = [1 0 0 0;
     0 0 1 0];
 D = [0,0;0,0];
