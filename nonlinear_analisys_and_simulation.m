@@ -2,7 +2,7 @@ clear;
 close all;
 clc;
 
-%% Scelta qualitativa del metodo di integrazione
+%% Scelta qualitativa del metodo di integrazione (2.1)
 % Parametri e condizioni iniziali
 invpendulumP = invpendulum_parameters ();
 x_0 = [0; 0; deg2rad(1); 0];
@@ -68,7 +68,7 @@ theta78 = x78(:,3);
 t_es_78 = toc;
 
 % Grafico - confronto tra riferimento e ode45
-figure(1)
+figure('Name', '2.1 - Ode vs Benchmark Solution')
 subplot(3, 2, 1)
 plot(tt, xcart_rif, 'k', 'LineWidth', 2);
 hold on;
@@ -128,7 +128,7 @@ ylabel('Pendulum angle [°]');
 legend('Benchmark solution','Ode78', 'Location','southeast');
 title ('Pendulum angle - rif vs ode78');
 
-%% Scelta quantitativa del metodo di integrazione 
+%% Scelta quantitativa del metodo di integrazione (2.1)
 
 % Calcolo errori assoluti
 xcart_rif45 = interp1(tt, xcart_rif, t45);
@@ -146,7 +146,7 @@ errtheta_45 = abs(theta_rif45 - theta45);
 errtheta_23 = abs(theta_rif23 - theta23);
 errtheta_78 = abs(theta_rif78 - theta78);
 
-figure(2)
+figure('Name', '2.1 - Absolute Err and ET')
 subplot(3, 1, 1)
 plot(t45, err_45, 'LineWidth',2);
 hold on;
@@ -178,7 +178,7 @@ xlabel('Solver');
 title('Times of execution');
 
 %% Soluzione con Ode78
-figure(3)
+figure('Name', '2.1 - Ode78 Solution')
 subplot(2,1,1);
 plot(t78, xcart78, 'LineWidth',2);
 xlabel('Time [s]');
@@ -191,7 +191,7 @@ xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle \theta(t)');
 
-%% Sensibilità alle tolleranze
+%% Sensibilità alle tolleranze (2.1)
 % Integrazione con tolleranze di riferimento (RelTol = 1e-3, AbsTol=1e-6)
 % Integrazione con valori di tolleranza più alti (RelTol=1e-6,AbsTol=1e-9)
 tic;
@@ -224,7 +224,7 @@ theta78_2 = x78_2(:,3);
 t_es_78_2 = toc;
 
 % Confronto tra risultati
-figure (4)
+figure ('Name','2.1 - Tolerance sensitivity')
 subplot(2,1,1)
 plot(t78, xcart78, 'k', 'LineWidth',2);
 hold on;
@@ -246,14 +246,14 @@ legend('Standard tolerances', 'Tighter tolerances', 'Looser tolerances');
 title('Tolerance comparison for pendulum angle');
 
 % Tempi di esecuzione con diverse tolleranze
-figure(5)
+figure('Name','2.1 - ET with Different Tol')
 t_es = [t_es_78, t_es_78_1, t_es_78_2];
 labels = {'Standard tolerances', 'Tighter tolerances', 'Looser tolerances'};
 bar(t_es);
 set(gca, 'XTickLabel', labels);
 title('Times of execution');
 
-%% DISTURBO - Scelta qualitativa del metodo di integrazione
+%% DISTURBO - Scelta qualitativa del metodo di integrazione (2.2)
 % Parametri e condizioni iniziali
 invpendulumP = invpendulum_parameters ();
 x_0_d = [0; 0; 0; 0];
@@ -262,11 +262,7 @@ t_f_d = 50;
 
 % DISTURBO Integrazione - soluzione di riferimento
 tic;
-ODE_obj = ode; 
-% ode da matlab 2023 permette di interagire in questo modo con la funzione
-% ODE, in modo da rendere tutto anche più leggibile per chi legge il codice
-% senza averlo fatto. si potrebbe anche fare l'approccio più diretto
-% chiamando direttamente ode45 per esempio, ma questo è meglio. 
+ODE_obj = ode;
 ODE_obj.ODEFcn = @(t,x) invpendulumP_f(t,x,@invpendulum_input_d, invpendulumP);
 ODE_obj.InitialValue = x_0_d;
 ODE_obj.Solver = 'ode89';
@@ -319,7 +315,7 @@ theta78_d = x78_d(:,3);
 t_es_78_d = toc;
 
 % DISTURBO Grafico - confronto tra riferimento e ode45
-figure(6)
+figure('Name', '2.2 - Ode vs Benchmark with Disturb')
 subplot(3, 2, 1)
 plot(tt_d, xcart_rif_d, 'k', 'LineWidth', 2);
 hold on;
@@ -394,7 +390,7 @@ errtheta_45_d = abs(theta_rif45_d - theta45_d);
 errtheta_23_d = abs(theta_rif23_d - theta23_d);
 errtheta_78_d = abs(theta_rif78_d - theta78_d);
 
-figure(7)
+figure('Name', 'Absolute Err and ET with Disturb')
 subplot(3, 1, 1)
 plot(t45_d, err_45_d, 'LineWidth',2);
 hold on;
@@ -425,14 +421,14 @@ ylabel('Time of execution');
 xlabel('Solver');
 title('Times of execution');
 
-%% DISTURBO - Soluzione con Ode23
+%% DISTURBO - Soluzione con Ode23 (Migliore)
 % Grafico del disturbo
 u_c = zeros(length(t23_d), 1);
 u_d = zeros(length(t23_d), 1);
 for i = 1 : length(t23_d)
     [u_c(i), u_d(i)] = invpendulum_input_d(t23_d(i), invpendulumP);
 end
-figure (8)
+figure ('Name', '2.2 - Disturb')
 plot(t23_d, u_d, 'LineWidth',2);
 grid on;
 xlabel('Time [s]');
@@ -440,7 +436,7 @@ ylabel('Disturbance [N/m]');
 title('Disturbance');
 
 % Grafici della soluzione
-figure(9)
+figure('Name', '2.2 - Ode23 Solution with Disturb')
 subplot(2,1,1);
 plot(t23_d, xcart23_d, 'LineWidth',2);
 xlabel('Time [s]');
@@ -486,7 +482,7 @@ theta23_2_d = x23_2_d(:,3);
 t_es_23_2_d = toc;
 
 % Confronto tra risultati
-figure (10)
+figure ('Name', 'Tolerance sensitivity with Disturb')
 subplot(2,1,1)
 plot(t23_d, xcart23_d, 'k', 'LineWidth',2);
 hold on;
@@ -508,7 +504,7 @@ legend('Standard tolerances', 'Tighter tolerances', 'Looser tolerances');
 title('Tolerance comparison for pendulum angle with disturbance');
 
 % Tempi di esecuzione con diverse tolleranze
-figure(14)
+figure('Name', 'ET with different tolerances and Disturb')
 t_es_d_t = [t_es_23_d, t_es_23_1_d, t_es_23_2_d];
 labels = {'Standard tolerances', 'Tighter tolerances', 'Looser tolerances'};
 bar(t_es_d_t);
@@ -638,8 +634,7 @@ xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
 end
 
 
-%% modello linearizzato 
-
+%% modello linearizzato (4)
 
 I_1 = invpendulumP.I_1;
 I_2 = invpendulumP.I_2;
@@ -667,7 +662,7 @@ C = [1 0 0 0;
 D = [0,0;0,0];
 x_0 = [0 0 deg2rad(1) 0]';
 
-eig_A = eig(A)
+eig_A = eig(A);
 y = zeros( length(t23_d),2 );
 
 for i = 1 : length(t23_d)
@@ -677,7 +672,7 @@ for i = 1 : length(t23_d)
 
 end
 
-figure()
+figure('Name', '4.2 - Linear Model Solution')
 subplot(2,1,1)
 plot(t23_d,y(:,1));
 xlabel('t(s)');
@@ -739,7 +734,7 @@ for ii = 1 : j-1
 end
 
 % plot lineare vs non lineare 
-figure('Name','Linear vs Non Linear')
+figure('Name','4.2 - Linear vs Non Linear Comparison')
 plot(t_lin,y(1:1:j-1,2));
 hold on 
 grid on
@@ -751,10 +746,12 @@ ylabel('\theta (deg)');
 %% simulinksss
 x_0_sim = [0,0]';
 
-% grafico
+% grafico non lineare con simulink
+tic;
 ex1 = sim("simulink_01.slx");
+t_simulink=toc;
 
-figure()
+figure('Name', '3.1 - Simulink Solution')
 subplot(2,1,1);
 title('Position Cart');
 plot(ex1.tout,ex1.x);
@@ -768,7 +765,78 @@ plot(ex1.tout,ex1.theta);
 xlabel('t(s)');
 ylabel('\theta (deg)');
 grid on;
-% grafico linearizzato
+
+%confronto fra grafico non lineare in simulink e quello ottenuto con ode89
+%in matlab (benchmark e ode78). Le impostazioni del solutore simulink sono
+%state lasciate STANDARD per effettuare il confronto
+figure('Name', '3.1 - Simulink Solution vs MATLAB Solution')
+subplot(3,1,1)
+title('Cart Position');
+plot(ex1.tout,ex1.x, 'LineWidth', 2);
+hold on
+plot(t23_d, xcart23_d, '--', 'LineWidth',2);
+hold on
+plot(tt_d, xcart_rif_d,'--', 'LineWidth', 2);
+xlabel('t(s)');
+ylabel('x (m)');
+legend('Simulink', 'Ode23', 'Benchmark (Ode89)');
+
+subplot(3,1,2)
+title('Pendulum Angle');
+plot(ex1.tout,rad2deg(ex1.theta), 'LineWidth', 2);
+hold on
+plot(tt_d, rad2deg(theta_rif_d), '--', 'LineWidth',2);
+hold on
+plot(t23_d, rad2deg(theta23_d), '--', 'LineWidth', 2);
+xlabel('t(s)');
+ylabel('\theta (degrees)');
+legend('Simulink', 'Ode23', 'Benchmark (Ode89)');
+
+subplot(3,1,3)
+title('Disturb');
+plot(ex1.tout,ex1.disturb.Data, 'LineWidth', 2);
+hold on
+plot(t23_d, u_d, '--', 'LineWidth',2);
+xlabel('t(s)');
+ylabel('Disturb (N/m)');
+legend('Simulink', 'Matlab');
+
+%non si notano differenze significative in nessuno dei tre grafici di confronto.  in
+%Simulink abbiamo utilizzato il solutore ode23 per rendere significativo il confronto con matlab, il resto in automatico.
+% Per la soluzione di benchmark, sono
+%state usate tolleranze molto alte (rel=10^-12, ass=10^-9), mentre per
+%Ode23 sono state usate le tolleranze standard di matlab. 
+%con queste impostazione, si vede uno sfasamento nel picco di ampiezza
+%dell'oscillazione nella soluzione dell'integratore di simulink; ciò deriva
+%dal lasciare in automatico la funzione "max step size". Infatti, se esso è
+%troppo grande, il solutore aspetta troppo tempo per calcolare il punto
+%successivo della soluzione, e questi errori si accumulano nel tempo
+%portando a uno sfasamento temporale nelle oscillazioni. Forzando in
+%simulink uno MSS di 10^.2, lo sfasamento svanisce, mentre si manfiesta lasciando auto,
+%o per esempio imponendo 0.1.
+%un'osservazione che possiamo fare è sul tempo di esecuzione fra matlab e
+%simulink: 
+
+figure('Name', 'ET between Simulink and MATLAB')
+t_es = [t_es_23_d, t_simulink];
+bar(t_es);
+set(gca, 'XTickLabel', {'MATLAB (Ode23)', 'Simulink (Ode23)'});
+ylabel('Execution Time [s]');
+title('Times of execution');
+%la grossa differenza temporale è data dal diverso modo in cui matlab e
+%simulink gestiscono la risoluzione del problema. 
+% Gestione dell'Architettura a Blocchi: Mentre MATLAB esegue una funzione procedurale diretta, Simulink deve gestire la propagazione dei segnali tra i singoli blocchi a ogni passo temporale. 
+% Questo richiede la costante verifica della precedenza di calcolo e la gestione della memoria per ogni "porta" di comunicazione.
+% Zero-Crossing Detection: Simulink monitora costantemente le discontinuità (come gli scalini del disturbo) tramite algoritmi di rilevamento del passaggio per lo zero. 
+% Questa funzione, che garantisce elevata precisione fisica, comporta un numero elevato di calcoli extra per localizzare l'istante esatto dell'evento, operazione che uno script MATLAB standard non esegue automaticamente.
+
+
+%3.2
+%Le considerazioni di tempo e accuratezza che abbiamo fatto su MATLAB si basano sulla natura del sistema di ODE.
+%  Poiché Simulink risolve la stessa ODE, i criteri di scelta del solutore
+%  restano identici.
+
+% grafico linearizzato con simulink
 ex2 = sim("simulink_01_linearizzatp.slx");
 
 figure()
@@ -812,14 +880,14 @@ B = [0,0;
     kt/(r*(I_0+M-(I_1^2)/I_2)),((I_1*alpha_1)/I_2-alpha_0)/(I_0+M-(I_1^2)/I_2);
     0,0;
     I_1*kt/(r*I_2*(I_0+M-(I_1^2)/I_2)),((I_1^2*alpha_1)/I_2-I_1*alpha_0)/(I_2*(I_0+M-(I_1^2)/I_2))+alpha_1/I_2];
-eig_A_no_f  =eig(A)
+eig_A_no_f=eig(A);
 C = [1 0 0 0;
     0 0 1 0];
 D = [0,0;0,0];
 invpendulumP.sys = ss(A,B,C,D);
 [yy,tt] = initial(invpendulumP.sys,x_0,0.7);
 
-figure()
+figure('Name', '4.3 - Linear Frictionless Model')
 subplot(2,1,1);
 title('Position Cart');
 plot(tt,yy(:,1));
@@ -863,7 +931,7 @@ G_theta_d = G(2,2);
 %zero maps of the transfer functions.
 %Comment on the stability and dynamic properties of the system
 
-figure()
+figure('Name', '4.5 - Pole-Zero analysis')
 subplot(2,2,1)
 pzmap(G_x_i);
 title('G_{x i}')
