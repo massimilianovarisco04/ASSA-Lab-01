@@ -20,7 +20,8 @@ MAX:
 -Cosa ho fatto? 
 -Notare lo sfasamento su simulink e notare che ce l'abbiamo anche nella scelta del solutore con tolleranze non alte, infatti ode23 con alte tolleranze non è sfasato come 
 invece lo è a tollerance standard o basse... si potrebbe dover ridiscutere la scelta delle tolleranze a questo punto? Dato che non è tanto in assoluto il tempo di soluzione (si tratta di un 
-sistema semplice) forse vale la pena di uscre tolleranze alte... scrivendo però poi perchè abbiamo fatto quella scelta!
+sistema semplice) forse vale la pena di uscre tolleranze alte... scrivendo però poi perchè abbiamo fatto quella scelta! Il forzare il passo a 0.01, che rende il tutto più attendibile e preciso, va quindi
+cambiato anche nei disp successivi?
 -Nella parte di scelta del solutore numerico, anche cercando con chat quello che ci si aspetta è che non ci sia una differenza GERARCHICA nella scelta del solutore fra matlab e simulink,
 tuttavia su simulink per le ragioni che sono spiegate ci si mette molto di più a fare tutto. Quindi in 3.2 non scriviamo quasi niente
 
