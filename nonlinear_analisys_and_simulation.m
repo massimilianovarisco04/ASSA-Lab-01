@@ -743,10 +743,10 @@ legend ('Linear','Non Linear');
 xlabel('t(s)');
 ylabel('\theta (deg)');
 
-%% simulinksss
+%% simulinksss (3)
 x_0_sim = [0,0]';
 
-% grafico non lineare con simulink
+% grafico non lineare con simulink (3.1)
 tic;
 ex1 = sim("simulink_01.slx");
 t_simulink=toc;
@@ -768,54 +768,39 @@ grid on;
 
 %confronto fra grafico non lineare in simulink e quello ottenuto con ode89
 %in matlab (benchmark e ode78). Le impostazioni del solutore simulink sono
-%state lasciate STANDARD per effettuare il confronto
+%state lasciate STANDARD per effettuare il confronto (considerazioni finali
+%su latex)
 figure('Name', '3.1 - Simulink Solution vs MATLAB Solution')
 subplot(3,1,1)
-title('Cart Position');
 plot(ex1.tout,ex1.x, 'LineWidth', 2);
 hold on
 plot(t23_d, xcart23_d, '--', 'LineWidth',2);
 hold on
 plot(tt_d, xcart_rif_d,'--', 'LineWidth', 2);
+title('Cart Position')
 xlabel('t(s)');
 ylabel('x (m)');
 legend('Simulink', 'Ode23', 'Benchmark (Ode89)');
 
 subplot(3,1,2)
-title('Pendulum Angle');
 plot(ex1.tout,rad2deg(ex1.theta), 'LineWidth', 2);
 hold on
 plot(tt_d, rad2deg(theta_rif_d), '--', 'LineWidth',2);
 hold on
 plot(t23_d, rad2deg(theta23_d), '--', 'LineWidth', 2);
+title('Pendulum Angle')
 xlabel('t(s)');
 ylabel('\theta (degrees)');
 legend('Simulink', 'Ode23', 'Benchmark (Ode89)');
 
 subplot(3,1,3)
-title('Disturb');
 plot(ex1.tout,ex1.disturb.Data, 'LineWidth', 2);
 hold on
 plot(t23_d, u_d, '--', 'LineWidth',2);
+title('Disturb')
 xlabel('t(s)');
 ylabel('Disturb (N/m)');
 legend('Simulink', 'Matlab');
-
-%non si notano differenze significative in nessuno dei tre grafici di confronto.  in
-%Simulink abbiamo utilizzato il solutore ode23 per rendere significativo il confronto con matlab, il resto in automatico.
-% Per la soluzione di benchmark, sono
-%state usate tolleranze molto alte (rel=10^-12, ass=10^-9), mentre per
-%Ode23 sono state usate le tolleranze standard di matlab. 
-%con queste impostazione, si vede uno sfasamento nel picco di ampiezza
-%dell'oscillazione nella soluzione dell'integratore di simulink; ciò deriva
-%dal lasciare in automatico la funzione "max step size". Infatti, se esso è
-%troppo grande, il solutore aspetta troppo tempo per calcolare il punto
-%successivo della soluzione, e questi errori si accumulano nel tempo
-%portando a uno sfasamento temporale nelle oscillazioni. Forzando in
-%simulink uno MSS di 10^.2, lo sfasamento svanisce, mentre si manfiesta lasciando auto,
-%o per esempio imponendo 0.1.
-%un'osservazione che possiamo fare è sul tempo di esecuzione fra matlab e
-%simulink: 
 
 figure('Name', 'ET between Simulink and MATLAB')
 t_es = [t_es_23_d, t_simulink];
@@ -824,17 +809,8 @@ set(gca, 'XTickLabel', {'MATLAB (Ode23)', 'Simulink (Ode23)'});
 ylabel('Execution Time [s]');
 title('Times of execution');
 %la grossa differenza temporale è data dal diverso modo in cui matlab e
-%simulink gestiscono la risoluzione del problema. 
-% Gestione dell'Architettura a Blocchi: Mentre MATLAB esegue una funzione procedurale diretta, Simulink deve gestire la propagazione dei segnali tra i singoli blocchi a ogni passo temporale. 
-% Questo richiede la costante verifica della precedenza di calcolo e la gestione della memoria per ogni "porta" di comunicazione.
-% Zero-Crossing Detection: Simulink monitora costantemente le discontinuità (come gli scalini del disturbo) tramite algoritmi di rilevamento del passaggio per lo zero. 
-% Questa funzione, che garantisce elevata precisione fisica, comporta un numero elevato di calcoli extra per localizzare l'istante esatto dell'evento, operazione che uno script MATLAB standard non esegue automaticamente.
-
-
-%3.2
-%Le considerazioni di tempo e accuratezza che abbiamo fatto su MATLAB si basano sulla natura del sistema di ODE.
-%  Poiché Simulink risolve la stessa ODE, i criteri di scelta del solutore
-%  restano identici.
+%simulink gestiscono la risoluzione del problema. (considerazioni finali su
+%latex)
 
 % grafico linearizzato con simulink
 ex2 = sim("simulink_01_linearizzatp.slx");
