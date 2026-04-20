@@ -921,4 +921,10 @@ subplot(2,2,4)
 pzmap(G_theta_d);
 title('G_{\theta d}')
 
+
 %  tutti con  almeno un polo con parte reale positiva [GAME OVER]
+
+ex4=sim('simulink_01_linearizzatp');
+theta_out=ex4.theta_lin;
+figure()
+plot(ex4.tout,theta_out);
