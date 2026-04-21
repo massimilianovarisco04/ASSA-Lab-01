@@ -25,7 +25,14 @@ cambiato anche nei disp successivi?
 -Nella parte di scelta del solutore numerico, anche cercando con chat quello che ci si aspetta è che non ci sia una differenza GERARCHICA nella scelta del solutore fra matlab e simulink,
 tuttavia su simulink per le ragioni che sono spiegate ci si mette molto di più a fare tutto. Quindi in 3.2 non scriviamo quasi niente
 
-
+Coordinamento 21/04
+Cosa abbiamo fatto?
+-5.1 fare diagramma blocchi a mano (simbolico) abbiamo praticamente già fatto
+-5.2 fatto
+-5.3 fatto con cancellazione fra G (con RH trovo un RANGE per kd e kp)
+-5.4 abbiamo fatto la prima roba, ci manca la seconda parte. per la seconda parte controlliamo i criteri del DOzio, con Stepinfo. aggiustiamo wc e xic.
+-5.5 lo facciamo a mano con il teorema del valore finale. troveremo che il pendolo rimane inclinato (steady state error)
+e vediamo come questa cosa dipende dai guadagni del controllore 
 
 
 

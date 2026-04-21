@@ -925,10 +925,6 @@ title('G_{\theta d}')
 %  tutti con  almeno un polo con parte reale positiva [GAME OVER]
 
 %% (5.3)
-R=tf([kd kp], 1);
-G_PD=G_theta_d/(1+R*G_theta_i);
-figure()
-bode(G_PD)
 
 %la condizione necessaria e sufficiente per l'asistotica stabilità del
 %sistema in anello chiuso è che il denominatore della funzione di G_PD sia
@@ -942,9 +938,18 @@ bode(G_PD)
 %possibile. routh da solo potrebbe portare a una dinamica del sistema che
 %ha tempi di risposta troppo lunghi anche se è asintoticamente stabile. 
 
-[R]=pidtune(G_theta_i, 'PD');
-kp=R.Kp;
-kd=R.Kd;
+%(5.4)
+wc = 20;
+e_c = 0.5;
+kp= (wc^2+29.32)/9.336;
+kd= (2*e_c*wc)/9.336;
+G_PD=tf(1.774, [1 9.336*kd (9.336*kp-29.32)]);
+%fatta a mano così potevamo fare le cancellazioni tra le G
+%matlab non cancella i poli e zeri in autonomia per una questione numerica,
+%di decimali diversi dopo la virgola
+figure()
+pzmap(G_PD);
+grid on
 
 ex4=sim('simulink_5_1_closed_loop');
 theta=ex4.theta;
@@ -953,6 +958,9 @@ plot(ex4.tout, rad2deg(theta));
 grid on
 ylim([-10,10]);
 
+Co = ctrb(A,B(:,2));
+N = size(A,1);
+isControllable  = (rank(Co) == N);
 
 
 
