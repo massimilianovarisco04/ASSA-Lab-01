@@ -813,37 +813,37 @@ title('Times of execution');
 %latex)
 
 % grafico linearizzato con simulink
-ex2 = sim("simulink_01_linearizzatp.slx");
-
-figure()
-subplot(2,1,1);
-title('Position Cart');
-plot(ex2.tout,ex2.x_lin);
-xlabel('t(s)');
-ylabel('x (m)');
-
-grid on;
-subplot(2,1,2);
-title('Pendulum Angle')
-plot(ex2.tout,ex2.theta_lin);
-xlabel('t(s)');
-ylabel('\theta (deg)');
-grid on;
-ex3 = sim("simulink_01_nonlineare_per_confronto_con_lineare.slx");
+% ex2 = sim("simulink_01_linearizzatp.slx");
+% 
+% figure()
+% subplot(2,1,1);
+% title('Position Cart');
+% plot(ex2.tout,ex2.x_lin);
+% xlabel('t(s)');
+% ylabel('x (m)');
+% 
+% grid on;
+% subplot(2,1,2);
+% title('Pendulum Angle')
+% plot(ex2.tout,ex2.theta_lin);
+% xlabel('t(s)');
+% ylabel('\theta (deg)');
+% grid on;
+% ex3 = sim("simulink_01_nonlineare_per_confronto_con_lineare.slx");
 
 
 % lineare vs non lineare in simulink
 
-figure()
-plot(ex3.tout,rad2deg(ex3.theta));
-hold on
-grid on
-plot(ex2.tout,rad2deg(ex2.theta_lin));
-xlim([0 0.7]);
-ylim([0 20]);
-legend("non linear","linear");
-xlabel('t(s)');
-ylabel('\theta (deg)');
+% figure()
+% plot(ex3.tout,rad2deg(ex3.theta));
+% hold on
+% grid on
+% plot(ex2.tout,rad2deg(ex2.theta_lin));
+% xlim([0 0.7]);
+% ylim([0 20]);
+% legend("non linear","linear");
+% xlabel('t(s)');
+% ylabel('\theta (deg)');
 
 %% task 4.3
 c = 0;
@@ -898,8 +898,8 @@ sys = ss(A, B, C, D);
 G = tf(sys);
 
 G_x_i = G(1,1);
-G_x_d = G(2,1);
-G_theta_i = G(1,2);
+G_x_d = G(1,2);
+G_theta_i = G(2,1);
 G_theta_d = G(2,2);
 
 %% task 4.5 POLE-ZERO ANALYSIS
@@ -924,7 +924,36 @@ title('G_{\theta d}')
 
 %  tutti con  almeno un polo con parte reale positiva [GAME OVER]
 
-ex4=sim('simulink_01_linearizzatp');
-theta_out=ex4.theta_lin;
+%% (5.3)
+R=tf([kd kp], 1);
+G_PD=G_theta_d/(1+R*G_theta_i);
 figure()
-plot(ex4.tout,theta_out);
+bode(G_PD)
+
+%la condizione necessaria e sufficiente per l'asistotica stabilità del
+%sistema in anello chiuso è che il denominatore della funzione di G_PD sia
+%con radici strettamente negative. Usiamo kp e kd come parametri da
+%scegliere ad hoc per far sì che avvenga questa cosa. Lo facciamo usando il
+%criterio di Routh_Houwitz con parametri. (A mano). Il criterio di mà dei
+%RANGE di asintotica stabilità...
+%esiste anche una funzione matlab che lo fa per noi, che possiamo
+%utilizzare come verifica. questa funzione oltre a mettere kp e kd nei
+%range, li ottimizza in modo che la risposta sia il più efficiente
+%possibile. routh da solo potrebbe portare a una dinamica del sistema che
+%ha tempi di risposta troppo lunghi anche se è asintoticamente stabile. 
+
+[R]=pidtune(G_theta_i, 'PD');
+kp=R.Kp;
+kd=R.Kd;
+
+ex4=sim('simulink_5_1_closed_loop');
+theta=ex4.theta;
+figure('Name', 'Risposta PD')
+plot(ex4.tout, rad2deg(theta));
+grid on
+ylim([-10,10]);
+
+
+
+
+
