@@ -924,43 +924,6 @@ title('G_{\theta d}')
 
 %  tutti con  almeno un polo con parte reale positiva [GAME OVER]
 
-%% (5.3)
-
-%la condizione necessaria e sufficiente per l'asistotica stabilità del
-%sistema in anello chiuso è che il denominatore della funzione di G_PD sia
-%con radici strettamente negative. Usiamo kp e kd come parametri da
-%scegliere ad hoc per far sì che avvenga questa cosa. Lo facciamo usando il
-%criterio di Routh_Houwitz con parametri. (A mano). Il criterio di mà dei
-%RANGE di asintotica stabilità...
-%esiste anche una funzione matlab che lo fa per noi, che possiamo
-%utilizzare come verifica. questa funzione oltre a mettere kp e kd nei
-%range, li ottimizza in modo che la risposta sia il più efficiente
-%possibile. routh da solo potrebbe portare a una dinamica del sistema che
-%ha tempi di risposta troppo lunghi anche se è asintoticamente stabile. 
-
-%(5.4)
-wc = 20;
-e_c = 0.5;
-kp= (wc^2+29.32)/9.336;
-kd= (2*e_c*wc)/9.336;
-G_PD=tf(1.774, [1 9.336*kd (9.336*kp-29.32)]);
-%fatta a mano così potevamo fare le cancellazioni tra le G
-%matlab non cancella i poli e zeri in autonomia per una questione numerica,
-%di decimali diversi dopo la virgola
-figure()
-pzmap(G_PD);
-grid on
-
-ex4=sim('simulink_5_1_closed_loop');
-theta=ex4.theta;
-figure('Name', 'Risposta PD')
-plot(ex4.tout, rad2deg(theta));
-grid on
-ylim([-10,10]);
-
-Co = ctrb(A,B(:,2));
-N = size(A,1);
-isControllable  = (rank(Co) == N);
 
 
 
