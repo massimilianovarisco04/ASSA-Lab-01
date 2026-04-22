@@ -948,3 +948,6 @@ xlabel('t(s)');
 ylabel('\theta (deg)');
 grid on;
 legend('Nonlinear with Friction');
+
+%% 5.9
+
