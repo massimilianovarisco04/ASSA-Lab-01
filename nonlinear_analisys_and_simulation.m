@@ -743,6 +743,7 @@ legend ('Linear','Non Linear');
 xlabel('t(s)');
 ylabel('\theta (deg)');
 
+
 %% simulinksss (3)
 x_0_sim = [0,0]';
 
@@ -844,7 +845,6 @@ ylim([0 20]);
 legend("non linear","linear");
 xlabel('t(s)');
 ylabel('\theta (deg)');
-
 %% task 4.3
 c = 0;
 b = 0;
