@@ -923,7 +923,8 @@ title('G_{\theta d}')
 
 %  tutti con  almeno un polo con parte reale positiva [GAME OVER]
 
-
+%% (5.6)
+%servono per far girare il simulink
 xhi_c = 0.7;
 wc = 10;
 kd= xhi_c*wc/4.668;
