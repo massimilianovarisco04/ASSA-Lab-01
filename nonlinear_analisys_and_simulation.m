@@ -830,21 +830,21 @@ plot(ex2.tout,ex2.theta_lin);
 xlabel('t(s)');
 ylabel('\theta (deg)');
 grid on;
-ex3 = sim("simulink_01_nonlineare_per_confronto_con_lineare.slx");
+% ex3 = sim("simulink_01_nonlineare_per_confronto_con_lineare.slx");
 
 
 % lineare vs non lineare in simulink
 
-figure()
-plot(ex3.tout,rad2deg(ex3.theta));
-hold on
-grid on
-plot(ex2.tout,rad2deg(ex2.theta_lin));
-xlim([0 0.7]);
-ylim([0 20]);
-legend("non linear","linear");
-xlabel('t(s)');
-ylabel('\theta (deg)');
+% figure()
+% plot(ex3.tout,rad2deg(ex3.theta));
+% hold on
+% grid on
+% plot(ex2.tout,rad2deg(ex2.theta_lin));
+% xlim([0 0.7]);
+% ylim([0 20]);
+% legend("non linear","linear");
+% xlabel('t(s)');
+% ylabel('\theta (deg)');
 %% task 4.3
 c = 0;
 b = 0;
@@ -922,3 +922,29 @@ pzmap(G_theta_d);
 title('G_{\theta d}')
 
 %  tutti con  almeno un polo con parte reale positiva [GAME OVER]
+
+
+xhi_c = 0.7;
+wc = 10;
+kd= xhi_c*wc/4.668;
+kp= (wc^2+29.32)/9.336;
+b = 0.005;
+c = 0.1;
+
+ex5 = sim('simulink_nonlineare_attrito.slx');
+% Simulate the nonlinear model with friction and plot results
+figure('Name', '4.6 - Nonlinear Model with Friction')
+subplot(2,1,1);
+title('Position Cart with Friction');
+plot(ex5.tout, ex5.x);
+xlabel('t(s)');
+ylabel('x (m)');
+grid on;
+
+subplot(2,1,2);
+title('Position Cart with Friction');
+plot(ex5.tout, rad2deg(ex5.theta));
+xlabel('t(s)');
+ylabel('\theta (deg)');
+grid on;
+legend('Nonlinear with Friction');
