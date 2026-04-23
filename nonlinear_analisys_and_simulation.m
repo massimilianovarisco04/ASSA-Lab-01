@@ -951,18 +951,22 @@ grid on;
 legend('Nonlinear with Friction');
 
 %% 5.11
-%vado a fare il tuning del PDI con metodo di Ziegler-Nichols
-%step 1: 
-ki=0;
-kd=0;
-kp=2.5; %questo è il primo valore per cui a regime si instaura un'oscillazione permanente che si smorza di meno di un grado fino a 100 secondi
-%uso questo perchè un'oscillazione permanente perfetta è sostanzialmente
-%impossibile anche dati gli errori del calcolatore.
-%procedo a fare il tuning di kd e ki
+%faccio un tuning a mano guardando solo la condizione che abbiamo noi (non
+%verifico sovraelongazione nè tempo di assestamento... theta rimane sempre
+%un filo diverso da zero quindi il carrello continua a dare spinta. se ne
+%va via il carrello, che potrebbe anche andare bene ma non so perchè theta
+%non vada a zero preciso. non trovo il modo. 
+kp = 4;        
+ki = 2;   
+kd = 1;   
+if ki>(9.336*kp-29.32)*kd
+    fprintf('il regolatore non va bene!\n');
+end
 
-exe=sim('simulink_PDI.slx');
-figure('Name', 'PDI Tuning')
-plot(exe.tout, rad2deg(exe.theta), Linewidth=2);
+PID=sim('simulink_PDI.slx');
+figure('Name', 'PDI Tuned')
+plot(PID.tout, rad2deg(PID.theta), Linewidth=2);
 grid on
-
-
+hold on;
+plot(PID.tout, PID.x, LineWidth=2);
+legend('Theta', 'X');
