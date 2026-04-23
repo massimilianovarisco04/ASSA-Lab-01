@@ -749,7 +749,7 @@ x_0_sim = [0,0]';
 
 % grafico non lineare con simulink (3.1)
 tic;
-ex1 = sim("simulink_01.slx");
+ex1 = sim("simulink_nonlineare_attrito_openloop.slx");
 t_simulink=toc;
 
 figure('Name', '3.1 - Simulink Solution')
@@ -814,22 +814,22 @@ title('Times of execution');
 %latex)
 
 % grafico linearizzato con simulink
-ex2 = sim("simulink_01_linearizzatp.slx");
-
-figure()
-subplot(2,1,1);
-title('Position Cart');
-plot(ex2.tout,ex2.x_lin);
-xlabel('t(s)');
-ylabel('x (m)');
-
-grid on;
-subplot(2,1,2);
-title('Pendulum Angle')
-plot(ex2.tout,ex2.theta_lin);
-xlabel('t(s)');
-ylabel('\theta (deg)');
-grid on;
+% ex2 = sim("simulink_01_linearizzatp.slx");
+% 
+% figure()
+% subplot(2,1,1);
+% title('Position Cart');
+% plot(ex2.tout,ex2.x_lin);
+% xlabel('t(s)');
+% ylabel('x (m)');
+% 
+% grid on;
+% subplot(2,1,2);
+% title('Pendulum Angle')
+% plot(ex2.tout,ex2.theta_lin);
+% xlabel('t(s)');
+% ylabel('\theta (deg)');
+% grid on;
 % ex3 = sim("simulink_01_nonlineare_per_confronto_con_lineare.slx");
 
 
@@ -934,7 +934,7 @@ c = 0.1;
 
 ex5 = sim('simulink_nonlineare_attrito.slx');
 % Simulate the nonlinear model with friction and plot results
-figure('Name', '4.6 - Nonlinear Model with Friction')
+figure('Name', '5.7 - Nonlinear Model with Friction')
 subplot(2,1,1);
 title('Position Cart with Friction');
 plot(ex5.tout, ex5.x);
@@ -950,5 +950,19 @@ ylabel('\theta (deg)');
 grid on;
 legend('Nonlinear with Friction');
 
-%% 5.9
+%% 5.11
+%vado a fare il tuning del PDI con metodo di Ziegler-Nichols
+%step 1: 
+ki=0;
+kd=0;
+kp=2.5; %questo è il primo valore per cui a regime si instaura un'oscillazione permanente che si smorza di meno di un grado fino a 100 secondi
+%uso questo perchè un'oscillazione permanente perfetta è sostanzialmente
+%impossibile anche dati gli errori del calcolatore.
+%procedo a fare il tuning di kd e ki
+
+exe=sim('simulink_PDI.slx');
+figure('Name', 'PDI Tuning')
+plot(exe.tout, rad2deg(exe.theta), Linewidth=2);
+grid on
+
 
