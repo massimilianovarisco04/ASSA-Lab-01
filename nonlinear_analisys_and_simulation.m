@@ -950,5 +950,24 @@ ylabel('\theta (deg)');
 grid on;
 legend('Nonlinear with Friction');
 
-%% 5.9
+%% 5.11
+%faccio un tuning a mano guardando solo la condizione che abbiamo noi (non
+%verifico sovraelongazione nè tempo di assestamento... theta rimane sempre
+%un filo diverso da zero quindi il carrello continua a dare spinta. se ne
+%va via il carrello, che potrebbe anche andare bene ma non so perchè theta
+%non vada a zero preciso. non trovo il modo. 
+kp = 4;        
+ki = 2;   
+kd = 1;   
+if ki>(9.336*kp-29.32)*kd
+    fprintf('il regolatore non va bene!\n');
+end
+
+PID=sim('simulink_PDI.slx');
+figure('Name', 'PDI Tuned')
+plot(PID.tout, rad2deg(PID.theta), Linewidth=2);
+grid on
+hold on;
+plot(PID.tout, PID.x, LineWidth=2);
+legend('Theta', 'X');
 
