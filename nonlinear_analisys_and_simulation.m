@@ -749,7 +749,7 @@ x_0_sim = [0,0]';
 
 % grafico non lineare con simulink (3.1)
 tic;
-%ex1 = sim("simulink_01.slx");
+ex1 = sim("simulink_01.slx");
 t_simulink=toc;
 
 figure('Name', '3.1 - Simulink Solution')
