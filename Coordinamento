@@ -34,3 +34,9 @@ Cosa abbiamo fatto?
 -5.5 lo facciamo a mano con il teorema del valore finale. troveremo che il pendolo rimane inclinato (steady state error)
 e vediamo come questa cosa dipende dai guadagni del controllore 
 
+Coordinamento 22/04
+- 5.6 Ci siamo accorti che è necessario considerare un wc più alta rispetto alla soglia ricavata dal modello linearizzato (1,14). Questa è un'operazione da fare per robustezza quando si passa dal modello lineare a quello non lineare. 
+      Per il carrello invece è giusto che continui all'infinito perchè non ci sono attriti che lo fermano.
+- 5.7 Noi abbiamo modellizzato il PD senza considerare gli attriti e a partire da un modello lineare ma ora stiamo implementando questo PD su un modello non lineare e con attriti. Essendo che il PD non sa della presenza degli attriti
+ la theta subisce un disturbo troppo grande per riuscire ad arrivare a zero. Di conseguenza la corrente da una spinta sempre più negativa al carrello per cercare di raggiungere il riferimento che però non si raggiunge mai 
+(se theta continua ad essere diversa da zero anche x_dot_dot rimarrà sempre diversa da zero).

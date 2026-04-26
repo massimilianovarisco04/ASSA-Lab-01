@@ -814,22 +814,22 @@ title('Times of execution');
 %latex)
 
 % grafico linearizzato con simulink
-% ex2 = sim("simulink_01_linearizzatp.slx");
-% 
-% figure()
-% subplot(2,1,1);
-% title('Position Cart');
-% plot(ex2.tout,ex2.x_lin);
-% xlabel('t(s)');
-% ylabel('x (m)');
-% 
-% grid on;
-% subplot(2,1,2);
-% title('Pendulum Angle')
-% plot(ex2.tout,ex2.theta_lin);
-% xlabel('t(s)');
-% ylabel('\theta (deg)');
-% grid on;
+ex2 = sim("simulink_linearizzato_openloop.slx");
+
+figure()
+subplot(2,1,1);
+title('Position Cart');
+plot(ex2.tout,ex2.x_lin);
+xlabel('t(s)');
+ylabel('x (m)');
+
+grid on;
+subplot(2,1,2);
+title('Pendulum Angle')
+plot(ex2.tout,ex2.theta_lin);
+xlabel('t(s)');
+ylabel('\theta (deg)');
+grid on;
 % ex3 = sim("simulink_01_nonlineare_per_confronto_con_lineare.slx");
 
 
@@ -924,14 +924,11 @@ title('G_{\theta d}')
 %  tutti con  almeno un polo con parte reale positiva [GAME OVER]
 
 %% (5.6)
-% %servono per far girare il simulink
-b = 0;
-c = 0;
-
-xi = 0.7;
-omega_n = 10;
-kd= xi*omega_n/4.668;
-kp= (omega_n^2+29.32)/9.336;
+%servono per far girare il simulink
+xhi_c = 0.7;
+wc = 10;
+kd= xhi_c*wc/4.668;
+kp= (wc^2+29.32)/9.336;
 
 
 
@@ -947,7 +944,7 @@ kp= (omega_n^2+29.32)/9.336;
 % ylabel('x (m)');
 % grid on;
 % 
-% subplot(2,1,2);
+c = 0.1;
 % title('Position Cart with Friction');
 % plot(ex5.tout, rad2deg(ex5.theta));
 % xlabel('t(s)');
@@ -959,9 +956,23 @@ kp= (omega_n^2+29.32)/9.336;
 % tempo , usando il modello non lineare senza attriti, con condizioni
 % iniziali zero. (Si puo fare anche una simulazione in matlab o solo in simulink?) 
 
-kp = 13.85;
-kd = 1.5;
+ex5 = sim('simulink_nonlineare_attrito.slx');
+% Simulate the nonlinear model with friction and plot results
+figure('Name', '4.6 - Nonlinear Model with Friction')
+subplot(2,1,1);
+title('Position Cart with Friction');
+plot(ex5.tout, ex5.x);
+xlabel('t(s)');
+ylabel('x (m)');
+grid on;
 
+subplot(2,1,2);
+title('Position Cart with Friction');
+plot(ex5.tout, rad2deg(ex5.theta));
+xlabel('t(s)');
+ylabel('\theta (deg)');
+grid on;
+legend('Nonlinear with Friction');
 
 %% 5.11
 %faccio un tuning a mano guardando solo la condizione che abbiamo noi (non
@@ -983,3 +994,4 @@ grid on
 hold on;
 plot(PID.tout, PID.x, LineWidth=2);
 legend('Theta', 'X');
+
