@@ -923,14 +923,110 @@ title('G_{\theta d}')
 
 %  tutti con  almeno un polo con parte reale positiva [GAME OVER]
 
+
 %% (5.6)
 %servono per far girare il simulink
-xhi_c = 0.7;
-wc = 10;
-kd= xhi_c*wc/4.668;
-kp= (wc^2+29.32)/9.336;
-b = 0.005;
+b = 0;
+c = 0;
+
+xi = 0.7;
+omega_n = 10;
+kd= xi*omega_n/4.668;
+kp= (omega_n^2+29.32)/9.336;
+x0 = [0,0,0,0]';
+
+ODE_obj6 = ode;
+ODE_obj6.ODEFcn = @(t,x) invpendulumP_frictionless(t,x,kd,kp,@invpendulum_input_d, invpendulumP);
+ODE_obj6.InitialValue = x0;
+ODE_obj6.Solver = 'ode23';
+ODE_obj6.AbsoluteTolerance = 1e-13;
+ODE_obj6.RelativeTolerance = 1e-12;
+ODEResults_obj = solve(ODE_obj6, t_0_d, t_f_d);
+t23_frictionless = ODEResults_obj.Time';
+x23_frictionless = ODEResults_obj.Solution'; 
+xcart23_frictionless = x23_frictionless(:,1);
+theta23_frictionless = x23_frictionless(:,3);
+
+% Simulate the nonlinear model without friction and plot results
+figure('Name', '5.6 - Nonlinear Model without Friction');
+subplot(2,1,1);
+title('Position Cart without Friction');
+plot(t23_frictionless, xcart23_frictionless);
+xlabel('t(s)');
+ylabel('x (m)');
+grid on;
+subplot(2,1,2);
+title('Pendulum Angle without Friction');
+plot(t23_frictionless,rad2deg(theta23_frictionless));
+xlabel('t(s)');
+ylabel('\theta (deg)');
+grid on;
+
+% Ricalcolo dell'input PD 
+theta_rif = 0; 
+u1_feedback = kp * (theta_rif - x23_frictionless(:,3)) + kd * (-x23_frictionless(:,4));
+
+figure('Name','5.6 - Input');
+plot(t23_frictionless, u1_feedback);
+title('Sforzo di controllo (Retroazione PD)');
+xlabel('t(s)');
+ylabel('i(A)'); % controllate pls
+grid on;
+
+function xdot_d = invpendulumP_frictionless (t,x,kd,kp, input_fun, invpendulumP) 
+%sistema con disturbo in spazio di stato senza attriti
+
+I_1 = invpendulumP.I_1;
+I_2 = invpendulumP.I_2;
+I_0 = invpendulumP.I_0;
+g = invpendulumP.g;
+alpha_1 = invpendulumP.alpha_1;
+alpha_0 = invpendulumP.alpha_0;
+M = invpendulumP.M;
+[~ , u_d] = input_fun(t, invpendulumP);
+
+x1 = x(1);
+x2 = x(2);
+x3 = x(3);
+x4 = x(4);
+% inseriamo il PD all'interno della nostra funzione 
+theta_rif = 0;
+u1 =  kp * (theta_rif - x(3)) + kd * (- x(4));
+u2 = u_d;
+
+
+xdot_1 = x2;
+xdot_2 = (((I_1^2)/I_2)*g*sin(x3)*cos(x3)+(I_1/I_2)*u2*alpha_1*(cos(x3)^2)-I_1*(x4^2)*sin(x3)+u1-u2*alpha_0)/(I_0+M-(I_1^2/I_2)*(cos(x3)^2));
+xdot_3 = x4;
+xdot_4 = (I_1*xdot_2*cos(x3)+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
+
+xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
+end
+
+
+
+%% 5.7
+% ex5 = sim('simulink_nonlineare_attrito.slx');
+% % Simulate the nonlinear model with friction and plot results
+% figure('Name', '5.7 - Nonlinear Model with Friction')
+% subplot(2,1,1);
+% title('Position Cart with Friction');
+% plot(ex5.tout, ex5.x);
+% xlabel('t(s)');
+% ylabel('x (m)');
+% grid on;
+% 
 c = 0.1;
+% title('Position Cart with Friction');
+% plot(ex5.tout, rad2deg(ex5.theta));
+% xlabel('t(s)');
+% ylabel('\theta (deg)');
+% grid on;
+% legend('Nonlinear with Friction');
+
+% usiamo i guadagni trovati nel 5.4 per andare a vedere theta(t) e i(t) nel
+% tempo , usando il modello non lineare senza attriti, con condizioni
+% iniziali zero. (Si puo fare anche una simulazione in matlab o solo in simulink?) 
 
 ex5 = sim('simulink_nonlineare_attrito.slx');
 % Simulate the nonlinear model with friction and plot results
