@@ -956,9 +956,10 @@ legend('Nonlinear with Friction');
 %un filo diverso da zero quindi il carrello continua a dare spinta. se ne
 %va via il carrello, che potrebbe anche andare bene ma non so perchè theta
 %non vada a zero preciso. non trovo il modo. 
-kp = 4;        
+kp = 8;        
 ki = 2;   
-kd = 1;   
+kd = 1;
+%821 è lo standard
 if ki>(9.336*kp-29.32)*kd
     fprintf('il regolatore non va bene!\n');
 end
@@ -969,5 +970,11 @@ plot(PID.tout, rad2deg(PID.theta), Linewidth=2);
 grid on
 hold on;
 plot(PID.tout, PID.x, LineWidth=2);
-legend('Theta', 'X');
+hold on
+plot(PID.tout, PID.current.Data, LineWidth=2);
+ylim([-15, 15]);
+xlim([0 10]);
+ylabel('\theta [Degrees] / X [m] / i [A]')
+xlabel('Time [t]');
+legend('Theta', 'X', 'i');
 
