@@ -924,31 +924,44 @@ title('G_{\theta d}')
 %  tutti con  almeno un polo con parte reale positiva [GAME OVER]
 
 %% (5.6)
-%servono per far girare il simulink
-xhi_c = 0.7;
-wc = 10;
-kd= xhi_c*wc/4.668;
-kp= (wc^2+29.32)/9.336;
-b = 0.005;
-c = 0.1;
+% %servono per far girare il simulink
+b = 0;
+c = 0;
 
-ex5 = sim('simulink_nonlineare_attrito.slx');
-% Simulate the nonlinear model with friction and plot results
-figure('Name', '5.7 - Nonlinear Model with Friction')
-subplot(2,1,1);
-title('Position Cart with Friction');
-plot(ex5.tout, ex5.x);
-xlabel('t(s)');
-ylabel('x (m)');
-grid on;
+xi = 0.7;
+omega_n = 10;
+kd= xi*omega_n/4.668;
+kp= (omega_n^2+29.32)/9.336;
 
-subplot(2,1,2);
-title('Position Cart with Friction');
-plot(ex5.tout, rad2deg(ex5.theta));
-xlabel('t(s)');
-ylabel('\theta (deg)');
-grid on;
-legend('Nonlinear with Friction');
+
+
+
+%% 5.7
+% ex5 = sim('simulink_nonlineare_attrito.slx');
+% % Simulate the nonlinear model with friction and plot results
+% figure('Name', '5.7 - Nonlinear Model with Friction')
+% subplot(2,1,1);
+% title('Position Cart with Friction');
+% plot(ex5.tout, ex5.x);
+% xlabel('t(s)');
+% ylabel('x (m)');
+% grid on;
+% 
+% subplot(2,1,2);
+% title('Position Cart with Friction');
+% plot(ex5.tout, rad2deg(ex5.theta));
+% xlabel('t(s)');
+% ylabel('\theta (deg)');
+% grid on;
+% legend('Nonlinear with Friction');
+
+% usiamo i guadagni trovati nel 5.4 per andare a vedere theta(t) e i(t) nel
+% tempo , usando il modello non lineare senza attriti, con condizioni
+% iniziali zero. (Si puo fare anche una simulazione in matlab o solo in simulink?) 
+
+kp = 13.85;
+kd = 1.5;
+
 
 %% 5.11
 %faccio un tuning a mano guardando solo la condizione che abbiamo noi (non
