@@ -1044,7 +1044,7 @@ legend('Nonlinear with Friction');
 %non vada a zero preciso. non trovo il modo. 
 kp = 8;        
 ki = 2;   
-kd = 20;
+kd = 1;
 %821 è lo standard
 if ki>(9.336*kp-29.32)*kd
     fprintf('il regolatore non va bene!\n');
@@ -1069,22 +1069,80 @@ A = [0 1 0 0;
     0 0 ((I_1^2*g)/I_2)/(I_0+M-(I_1^2)/I_2) 0;
     0 0 0 1;
     0 ,0 ,((I_1^3*g)/I_2)/(I_2*(I_0+M-(I_1^2)/I_2))+(I_1*g)/I_2 ,0];
-
-B = [0,0;
-    kt/(r*(I_0+M-(I_1^2)/I_2)),((I_1*alpha_1)/I_2-alpha_0)/(I_0+M-(I_1^2)/I_2);
-    0,0;
-    I_1*kt/(r*I_2*(I_0+M-(I_1^2)/I_2)),((I_1^2*alpha_1)/I_2-I_1*alpha_0)/(I_2*(I_0+M-(I_1^2)/I_2))+alpha_1/I_2];
+%definisco B_u come la matrice che controlla solo l'input
+B_u = [0;
+    kt/(r*(I_0+M-(I_1^2)/I_2));
+    0;
+    I_1*kt/(r*I_2*(I_0+M-(I_1^2)/I_2))];
 
 C = [1 0 0 0;
     0 0 1 0];
 
 D = [0,0;0,0];
+B_d = [0;
+    ((I_1*alpha_1)/I_2-alpha_0)/(I_0+M-(I_1^2)/I_2);
+    0;
+    ((I_1^2*alpha_1)/I_2-I_1*alpha_0)/(I_2*(I_0+M-(I_1^2)/I_2))+alpha_1/I_2];
 %per la verifica di controllabilità faccio la verifica del rango della
 %matrice di controllabilità
-Q=[B, A*B, (A*A)*B, (A*A*A)*B];
-rango=rank(Q);
-if rango~=4
-    fprintf('\nQ non ha rango 4, il sistema non è controllabile\n');
+Co=ctrb(A, B_u);
+n=size(A,1);
+iscontrollable=(rank(Co)==n);
+if iscontrollable~=1
+    fprintf('Il sistema non è controllabile');
 end
 
 %% (6.2)
+
+%% (6.2)
+B_d = [0;
+    ((I_1*alpha_1)/I_2-alpha_0)/(I_0+M-(I_1^2)/I_2);
+    0;
+    ((I_1^2*alpha_1)/I_2-I_1*alpha_0)/(I_2*(I_0+M-(I_1^2)/I_2))+alpha_1/I_2];
+D_d=[0;0];
+
+K=zeros(4,1); %è il vettore dei guadagni che andremo a riempire con pole-placement
+%closed loop system matrix:
+
+% Prima coppia (poli dominanti, più lenti)
+xi1 = 0.7;
+omega_n1 = 5;
+omega_d1 = omega_n1*sqrt(1-xi1^2);
+pC_1 = -xi1*omega_n1 + 1i*omega_d1;
+pC_2 = -xi1*omega_n1 - 1i*omega_d1;
+
+% Seconda coppia (poli ausiliari, più veloci, es. 5-10x omega_n1)
+xi2 = 0.7;
+omega_n2 = 10;
+omega_d2 = omega_n2*sqrt(1-xi2^2);
+pC_3 = -xi2*omega_n2 + 1i*omega_d2;
+pC_4 = -xi2*omega_n2 - 1i*omega_d2;
+
+pC = [pC_1 pC_2 pC_3 pC_4];
+
+K = place(A, B_u, pC);  % K sarà 2x4
+%tuning dei poli fatto a buon senso...
+%usiamo la funzione che risolve il problema di trovare i guadagni che
+%mettano i poli proprio dove li vogliamo noi
+A_c=A-B_u*K;
+
+% Definisco il sistema
+sys_cl=ss(A_c, B_d, C, D_d);
+
+t=0:0.01:10;
+w = zeros(length(t), 1); %è il vettore che esprime il disturbo, non posso passarglielo come funzione
+for k = 1:length(t)
+    [~, w(k)] = invpendulum_input_d(t(k), invpendulumP);
+end
+x0=zeros(4,1);
+% Risolvo
+[x_dot, t_out, x_out] = lsim(sys_cl, w, t, x0);
+
+figure('Name', '6.2 - Controllore state-space')
+plot(t_out, x_out(:,1), LineWidth=2);
+hold on
+plot(t_out, rad2deg(x_out(:,3)), LineWidth=2);
+grid on;
+legend('X', '\theta');
+ylim([-5,5]);
+
