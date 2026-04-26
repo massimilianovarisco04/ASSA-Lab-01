@@ -1004,7 +1004,30 @@ xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
 end
 
 
+ex5 = sim('simulink_nonlineare_nonattrito_closedloop.slx');
+% Simulate the nonlinear model with friction and plot results
+figure('Name', '5.6 - Nonlinear Model without Friction(simulink)');
+subplot(2,1,1);
+title('Position Cart without Friction');
+plot(ex5.tout, ex5.x);
+xlabel('t(s)');
+ylabel('x (m)');
+grid on;
 
+subplot(2,1,2);
+title('Pendulum Angle without Friction');
+plot(ex5.tout, rad2deg(ex5.theta));
+xlabel('t(s)');
+ylabel('\theta (deg)');
+grid on;
+legend('Nonlinear without Friction');
+
+figure('Name','5.6 - Input (simulink)');
+plot(ex5.tout, ex5.input);
+title('Sforzo di controllo (Retroazione PD)');
+xlabel('t(s)');
+ylabel('i(A)'); % controllate pls
+grid on;
 %% 5.7
 % ex5 = sim('simulink_nonlineare_attrito.slx');
 % % Simulate the nonlinear model with friction and plot results
