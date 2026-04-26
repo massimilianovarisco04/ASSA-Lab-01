@@ -947,32 +947,28 @@ x23_frictionless = ODEResults_obj.Solution';
 xcart23_frictionless = x23_frictionless(:,1);
 theta23_frictionless = x23_frictionless(:,3);
 
+ex5 = sim('simulink_nonlineare_nonattrito_closedloop.slx');
 % Simulate the nonlinear model without friction and plot results
-figure('Name', '5.6 - Nonlinear Model without Friction');
-subplot(2,1,1);
-title('Position Cart without Friction');
-plot(t23_frictionless, xcart23_frictionless);
-xlabel('t(s)');
-ylabel('x (m)');
-grid on;
-subplot(2,1,2);
-title('Pendulum Angle without Friction');
-plot(t23_frictionless,rad2deg(theta23_frictionless));
+figure('Name', '5.6 - Pendulum Angle without Friction');
+plot(ex5.tout, rad2deg(ex5.theta));
 xlabel('t(s)');
 ylabel('\theta (deg)');
+hold on;
 grid on;
-
+plot(t23_frictionless,rad2deg(theta23_frictionless));
+legend('Pendulum Angle without Friction (simulink)','Pendulum Angle without Friction (matlab)');
 % Ricalcolo dell'input PD 
 theta_rif = 0; 
 u1_feedback = kp * (theta_rif - x23_frictionless(:,3)) + kd * (-x23_frictionless(:,4));
 
-figure('Name','5.6 - Input');
-plot(t23_frictionless, u1_feedback);
-title('Sforzo di controllo (Retroazione PD)');
+figure('Name','5.6 - Input ');
+plot(ex5.tout, ex5.input);
 xlabel('t(s)');
 ylabel('i(A)'); % controllate pls
+hold on;
+plot(t23_frictionless, u1_feedback);
 grid on;
-
+legend('Input feedback (simulink)','Input feedback (matlab)');
 function xdot_d = invpendulumP_frictionless (t,x,kd,kp, input_fun, invpendulumP) 
 %sistema con disturbo in spazio di stato senza attriti
 
@@ -1003,31 +999,15 @@ xdot_4 = (I_1*xdot_2*cos(x3)+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
 xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
 end
 
-
-ex5 = sim('simulink_nonlineare_nonattrito_closedloop.slx');
 % Simulate the nonlinear model with friction and plot results
-figure('Name', '5.6 - Nonlinear Model without Friction(simulink)');
-subplot(2,1,1);
-title('Position Cart without Friction');
+figure('Name', '5.6 - Position Cart');
 plot(ex5.tout, ex5.x);
 xlabel('t(s)');
 ylabel('x (m)');
+hold on;
 grid on;
-
-subplot(2,1,2);
-title('Pendulum Angle without Friction');
-plot(ex5.tout, rad2deg(ex5.theta));
-xlabel('t(s)');
-ylabel('\theta (deg)');
-grid on;
-legend('Nonlinear without Friction');
-
-figure('Name','5.6 - Input (simulink)');
-plot(ex5.tout, ex5.input);
-title('Sforzo di controllo (Retroazione PD)');
-xlabel('t(s)');
-ylabel('i(A)'); % controllate pls
-grid on;
+plot(t23_frictionless, xcart23_frictionless);
+legend('Position Cart (simulink)','Position Cart (matlab)');
 %% 5.7
 % ex5 = sim('simulink_nonlineare_attrito.slx');
 % % Simulate the nonlinear model with friction and plot results
