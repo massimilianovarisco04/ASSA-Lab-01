@@ -1011,23 +1011,8 @@ grid on;
 plot(t23_frictionless, xcart23_frictionless);
 legend('Position Cart (simulink)','Position Cart (matlab)');
 %% 5.7
-% ex5 = sim('simulink_nonlineare_attrito.slx');
-% % Simulate the nonlinear model with friction and plot results
-% figure('Name', '5.7 - Nonlinear Model with Friction')
-% subplot(2,1,1);
-% title('Position Cart with Friction');
-% plot(ex5.tout, ex5.x);
-% xlabel('t(s)');
-% ylabel('x (m)');
-% grid on;
-% 
-c = 0.1;
-% title('Position Cart with Friction');
-% plot(ex5.tout, rad2deg(ex5.theta));
-% xlabel('t(s)');
-% ylabel('\theta (deg)');
-% grid on;
-% legend('Nonlinear with Friction');
+c = invpendulumP.c;
+b=invpendulumP.b;
 
 % usiamo i guadagni trovati nel 5.4 per andare a vedere theta(t) e i(t) nel
 % tempo , usando il modello non lineare senza attriti, con condizioni
