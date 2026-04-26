@@ -931,8 +931,8 @@ c = 0;
 
 xi = 0.7;
 omega_n = 10;
-kd= xi*omega_n/4.668;
-kp= (omega_n^2+29.32)/9.336;
+kd= 1.5;
+kp= 13.85;
 x0 = [0,0,0,0]';
 
 ODE_obj6 = ode;
@@ -978,6 +978,8 @@ I_0 = invpendulumP.I_0;
 g = invpendulumP.g;
 alpha_1 = invpendulumP.alpha_1;
 alpha_0 = invpendulumP.alpha_0;
+kt = invpendulumP.kt;
+r = invpendulumP.r;
 M = invpendulumP.M;
 [~ , u_d] = input_fun(t, invpendulumP);
 
@@ -987,7 +989,7 @@ x3 = x(3);
 x4 = x(4);
 % inseriamo il PD all'interno della nostra funzione 
 theta_rif = 0;
-u1 =  kp * (theta_rif - x(3)) + kd * (- x(4));
+u1 =  (kp * (theta_rif - x(3)) + kd * (- x(4)))*(kt/r);
 u2 = u_d;
 
 
