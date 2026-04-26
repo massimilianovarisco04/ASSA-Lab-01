@@ -845,7 +845,7 @@ grid on;
 % legend("non linear","linear");
 % xlabel('t(s)');
 % ylabel('\theta (deg)');
-%% task 4.3
+%% task 4.3 (linear state-space frictionless model)
 c = 0;
 b = 0;
 A = [0 1 0 0;
@@ -1044,7 +1044,7 @@ legend('Nonlinear with Friction');
 %non vada a zero preciso. non trovo il modo. 
 kp = 8;        
 ki = 2;   
-kd = 1;
+kd = 20;
 %821 è lo standard
 if ki>(9.336*kp-29.32)*kd
     fprintf('il regolatore non va bene!\n');
@@ -1061,6 +1061,30 @@ plot(PID.tout, PID.current.Data, LineWidth=2);
 ylim([-15, 15]);
 xlim([0 10]);
 ylabel('\theta [Degrees] / X [m] / i [A]')
-xlabel('Time [t]');
+xlabel('Time [s]');
 legend('Theta', 'X', 'i');
 
+%% (6.1) verifica di controllabilità
+A = [0 1 0 0;
+    0 0 ((I_1^2*g)/I_2)/(I_0+M-(I_1^2)/I_2) 0;
+    0 0 0 1;
+    0 ,0 ,((I_1^3*g)/I_2)/(I_2*(I_0+M-(I_1^2)/I_2))+(I_1*g)/I_2 ,0];
+
+B = [0,0;
+    kt/(r*(I_0+M-(I_1^2)/I_2)),((I_1*alpha_1)/I_2-alpha_0)/(I_0+M-(I_1^2)/I_2);
+    0,0;
+    I_1*kt/(r*I_2*(I_0+M-(I_1^2)/I_2)),((I_1^2*alpha_1)/I_2-I_1*alpha_0)/(I_2*(I_0+M-(I_1^2)/I_2))+alpha_1/I_2];
+
+C = [1 0 0 0;
+    0 0 1 0];
+
+D = [0,0;0,0];
+%per la verifica di controllabilità faccio la verifica del rango della
+%matrice di controllabilità
+Q=[B, A*B, (A*A)*B, (A*A*A)*B];
+rango=rank(Q);
+if rango~=4
+    fprintf('\nQ non ha rango 4, il sistema non è controllabile\n');
+end
+
+%% (6.2)
