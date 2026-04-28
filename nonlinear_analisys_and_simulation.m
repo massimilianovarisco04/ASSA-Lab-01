@@ -1202,26 +1202,27 @@ i_out = (-K * x_hat_out')';
 err = x_real_out - x_hat_out;
 
 figure('Name', '6.5 - Ode23 solution with observer')
-subplot(2,1,1);
+subplot(3,1,1);
 plot(t_out, i_out, 'LineWidth',2);
 xlabel('Time [s]');
 ylabel('Current [A]');
 title ('Current with observer');
 
 
-subplot(2,1,2);
+subplot(3,1,2);
 plot(t_out, x_real_out(:,1), 'LineWidth',2);
 xlabel('Time [s]');
 ylabel('Position [m]');
 title ('Cart postion with observer');
 
-subplot(2,1,3);
+subplot(3,1,3);
 plot(t_out, rad2deg(x_real_out(:,3)), 'LineWidth',2);
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle with observer');
 
 figure('Name', '6.5 - Error ')
+subplot(2,2,4); %va plottato errore
 
 function xdot_d = nonlinear_per_oss (x, u_c, d_f, invpendulumP) %sistema con disturbo in spazio di stato
 
@@ -1252,7 +1253,7 @@ xdot_4 = (I_1*xdot_2*cos(x3)-b*x4+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
 xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
 end
 
-function dx_t = closed_loop_nonlinear(t, x_t, K, L, A, B_u, B_d, C, invpendulumP)
+function dx_t = closed_loop_nonlinear(t, x_t, K, L, A, B_u, ~, C, invpendulumP)
     % Spacchetta il vettore di stato aumentato
     x     = x_t(1:4);    % stato reale (sistema nonlineare)
     x_hat = x_t(5:8);    % stato stimato dall'osservatore
@@ -1270,7 +1271,11 @@ function dx_t = closed_loop_nonlinear(t, x_t, K, L, A, B_u, B_d, C, invpendulumP
     x_dot = nonlinear_per_oss(x, u_c, d_f, invpendulumP);
 
     % --- Osservatore (lineare) ---
-    x_hat_dot = (A-L*C-B_u*K)*x_hat+B_d*d_f+L*y;
+    x_hat_dot = (A-L*C-B_u*K)*x_hat+L*y;
+    %qui non ci può stare la matrice B_d legata all'osservatore perchè non
+    %può sapere l'osservatore quale sia il disturbo prima che esso stesso
+    %si verifichi. le informazioni sul disturbo gli devono giungere tramite
+    %y.
 
     dx_t = [x_dot; x_hat_dot];
 end
