@@ -1187,7 +1187,71 @@ lT_o = place(A',C', pC_o);
 L = lT_o';
 
 %% 6.5
-% Troviamo equazioni nel non lineare 
+
+x0_t = [x0; x0];   % stato iniziale aumentato (8x1)
+[t_out, x_out] = ode23(@(t,x) closed_loop_nonlinear(t, x, K, L, A, B_u, B_d, C, invpendulumP), t, x0_t);
+
+% Estrai le variabili
+x_real_out = x_out(:, 1:4);
+x_hat_out  = x_out(:, 5:8);
+
+% Calcola i(t) = u(t) = -K*x_hat
+i_out = (-K * x_hat_out')';
+
+% Errore di stima
+err = x_real_out - x_hat_out;
+
+figure('Name', '6.5 - Ode23 solution with observer')
+subplot(2,1,1);
+plot(t_out, i_out, 'LineWidth',2);
+xlabel('Time [s]');
+ylabel('Current [A]');
+title ('Current with observer');
+
+
+subplot(2,1,2);
+plot(t_out, x_real_out(:,1), 'LineWidth',2);
+xlabel('Time [s]');
+ylabel('Position [m]');
+title ('Cart postion with observer');
+
+subplot(2,1,3);
+plot(t_out, rad2deg(x_real_out(:,3)), 'LineWidth',2);
+xlabel('Time [s]');
+ylabel('Pendulum angle [°]');
+title('Pendulum angle with observer');
+
+figure('Name', '6.5 - Error ')
+
+function xdot_d = nonlinear_per_oss (x, u_c, d_f, invpendulumP) %sistema con disturbo in spazio di stato
+
+I_1 = invpendulumP.I_1;
+I_2 = invpendulumP.I_2;
+I_0 = invpendulumP.I_0;
+b = invpendulumP.b;
+g = invpendulumP.g;
+alpha_1 = invpendulumP.alpha_1;
+c = invpendulumP.c;
+alpha_0 = invpendulumP.alpha_0;
+M = invpendulumP.M;
+kt = invpendulumP.kt;
+r = invpendulumP.r;
+
+x1 = x(1);
+x2 = x(2);
+x3 = x(3);
+x4 = x(4);
+u1 = u_c*kt/r;
+u2 = d_f;
+
+xdot_1 = x2;
+xdot_2 = (-(I_1/I_2)*b*x4*cos(x3)+((I_1^2)/I_2)*g*sin(x3)*cos(x3)+(I_1/I_2)*u2*alpha_1*(cos(x3)^2)-I_1*(x4^2)*sin(x3)-c*x2+u1-u2*alpha_0)/(I_0+M-(I_1^2/I_2)*(cos(x3)^2));
+xdot_3 = x4;
+xdot_4 = (I_1*xdot_2*cos(x3)-b*x4+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
+
+xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
+end
+
 function dx_t = closed_loop_nonlinear(t, x_t, K, L, A, B_u, B_d, C, invpendulumP)
     % Spacchetta il vettore di stato aumentato
     x     = x_t(1:4);    % stato reale (sistema nonlineare)
@@ -1206,69 +1270,7 @@ function dx_t = closed_loop_nonlinear(t, x_t, K, L, A, B_u, B_d, C, invpendulumP
     x_dot = nonlinear_per_oss(x, u_c, d_f, invpendulumP);
 
     % --- Osservatore (lineare) ---
-    x_hat_dot = (A-L*C-B_u*K)*x_hat+L*y;
+    x_hat_dot = (A-L*C-B_u*K)*x_hat+B_d*d_f+L*y;
 
     dx_t = [x_dot; x_hat_dot];
 end
-
-
-x0_t = [x0; x0];   % stato iniziale aumentato (8x1)
-[t_out, x_out] = ode23(@(t,x) closed_loop_nonlinear(t, x, K, L, A, B_u, B_d, C, invpendulumP), t, x0_t);
-
-% Estrai le variabili
-x_real_out = x_out(:, 1:4);
-x_hat_out  = x_out(:, 5:8);
-
-% Calcola i(t) = u(t) = -K*x_hat
-i_out = (-K * x_hat_out')';
-
-% Errore di stima
-err = x_real_out - x_hat_out;
-
-
-
-figure('Name', '6.5 - Ode23 solution with observer')
-subplot(2,1,1);
-plot(t_out, x_real_out(:,1), 'LineWidth',2);
-xlabel('Time [s]');
-ylabel('Position [m]');
-title ('Cart postion with disturbance x(t)');
-
-subplot(2,1,2);
-plot(t_out, rad2deg(x_real_out(:,3)), 'LineWidth',2);
-xlabel('Time [s]');
-ylabel('Pendulum angle [°]');
-title('Pendulum angle with disturbance \theta(t)');
-
-function xdot_d = nonlinear_per_oss (x, u_c, d_f, invpendulumP) %sistema con disturbo in spazio di stato
-
-I_1 = invpendulumP.I_1;
-I_2 = invpendulumP.I_2;
-I_0 = invpendulumP.I_0;
-b = invpendulumP.b;
-g = invpendulumP.g;
-alpha_1 = invpendulumP.alpha_1;
-c = invpendulumP.c;
-alpha_0 = invpendulumP.alpha_0;
-M = invpendulumP.M;
-
-x1 = x(1);
-x2 = x(2);
-x3 = x(3);
-x4 = x(4);
-u1 = u_c;
-u2 = d_f;
-
-xdot_1 = x2;
-xdot_2 = (-(I_1/I_2)*b*x4*cos(x3)+((I_1^2)/I_2)*g*sin(x3)*cos(x3)+(I_1/I_2)*u2*alpha_1*(cos(x3)^2)-I_1*(x4^2)*sin(x3)-c*x2+u1-u2*alpha_0)/(I_0+M-(I_1^2/I_2)*(cos(x3)^2));
-xdot_3 = x4;
-xdot_4 = (I_1*xdot_2*cos(x3)-b*x4+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
-
-xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
-end
-
-%% 6.7 
-sys_CO = ss( [A, -B_u*K; L*C, A-L*C-B_u*K], [B_d; zeros(4,1)], [C, zeros(2,4)], 0);
-[yy, t_out]=step(sys_CO);
-figure()
-plot(t_out, yy);
