@@ -40,3 +40,13 @@ Coordinamento 22/04
 - 5.7 Noi abbiamo modellizzato il PD senza considerare gli attriti e a partire da un modello lineare ma ora stiamo implementando questo PD su un modello non lineare e con attriti. Essendo che il PD non sa della presenza degli attriti
  la theta subisce un disturbo troppo grande per riuscire ad arrivare a zero. Di conseguenza la corrente da una spinta sempre più negativa al carrello per cercare di raggiungere il riferimento che però non si raggiunge mai 
 (se theta continua ad essere diversa da zero anche x_dot_dot rimarrà sempre diversa da zero).
+
+Coordinamento 28/04
+-6.2 "evaluate teh effect on performance..." mettiamo sembre lo smorzamento ottimale 0.7. come frequenze w_c usiamo tre coppie, e valutiamo la velocità di risposta e la sovraelongazione, 
+e l'energia spesa. usiamo le coppie (1,2), (2,5), (5,10) e vediamo anche con stepinfo i dati che ricaviamo su sovraelongazione e settling time, e scegliamo anche quello che ha un buon rapporto risposta/energia. 
+l'energia la calcoliamo guardando i coefficienti del vettore dei guadagni, quanto sono alti, e ne facciamo la norma, che è proporzionale all'energia spesa. 
+-6.3 i polo dell'osservatore devono garantire una dinamica da 2 a 6 volte più veloce del sistema normale. avere dei poli dell'osservatore troppo distanti dai poli del sistema normale, quinid troppo alti,
+significa che il nostro osservatore non manda correttamente a zero i disturbi. questo avviene perchè con poli troppo veloci avrebbe una frequenza di annullamento (-40db) che potrebbe far passare dei disturbi a medio-alta frequenza;
+comunque inferiore a quella dei poli dell'osservatore. scegliamo da 2 a 6 in b
+-6.4 scriviamo le equazioni della slide 23, e le ricaviamo come fa lui nelle slide, con x e x cappuccio.
+-6.5 
