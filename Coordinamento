@@ -49,7 +49,7 @@ l'energia la calcoliamo guardando i coefficienti del vettore dei guadagni, quant
 significa che il nostro osservatore non manda correttamente a zero i disturbi. questo avviene perchè con poli troppo veloci avrebbe una frequenza di annullamento (-40db) che potrebbe far passare dei disturbi a medio-alta frequenza;
 comunque inferiore a quella dei poli dell'osservatore. scegliamo da 2 a 6 in b
 -6.4 scriviamo le equazioni della slide 23, e le ricaviamo come fa lui nelle slide, con x e x cappuccio.
--6.5: facciamo paragone tra con e senza compensatore (osservatore più controllore in spazio di stato) e vedo cosa cambia con diverse scelte di poli
+-6.5: facciamo paragone tra con e senza compensatore (osservatore più controllore in spazio di stato) e vedo cosa cambia con diverse scelte di poli. In più scriviamo che abbiamo usato l'osservatore lineare sul sistema non lineare.
 - 6.6: erik
 
 DIVISIONI: Marta 6.2 e 6.5, Max 6.3 e 6.4, erik 6.6
