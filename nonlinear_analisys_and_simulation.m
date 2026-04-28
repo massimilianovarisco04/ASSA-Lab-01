@@ -1187,7 +1187,6 @@ lT_o = place(A',C', pC_o);
 L = lT_o';
 
 %% 6.5
-x_t = zeros(8,1);
 % Troviamo equazioni nel non lineare 
 function dx_t = closed_loop_nonlinear(t, x_t, K, L, A, B_u, B_d, C, invpendulumP)
     % Spacchetta il vettore di stato aumentato
@@ -1207,17 +1206,18 @@ function dx_t = closed_loop_nonlinear(t, x_t, K, L, A, B_u, B_d, C, invpendulumP
     x_dot = nonlinear_per_oss(x, u_c, d_f, invpendulumP);
 
     % --- Osservatore (lineare) ---
-    x_hat_dot = A*x_hat + B_u*u_c + B_d*d_f + L*(y - C*x_hat);
+    x_hat_dot = (A-L*C-B_u*K)*x_hat+L*y;
 
     dx_t = [x_dot; x_hat_dot];
 end
 
+
 x0_t = [x0; x0];   % stato iniziale aumentato (8x1)
-[t_out, x_out] = ode23(@(t,x) closed_loop_nonlinear(t, x_t, K, L, A, B_u, B_d, C, invpendulumP), t, x0_t);
+[t_out, x_out] = ode23(@(t,x) closed_loop_nonlinear(t, x, K, L, A, B_u, B_d, C, invpendulumP), t, x0_t);
 
 % Estrai le variabili
-x_real_out     = x_out(:, 1:4);
-x_hat_out = x_out(:, 5:8);
+x_real_out = x_out(:, 1:4);
+x_hat_out  = x_out(:, 5:8);
 
 % Calcola i(t) = u(t) = -K*x_hat
 i_out = (-K * x_hat_out')';
@@ -1266,3 +1266,9 @@ xdot_4 = (I_1*xdot_2*cos(x3)-b*x4+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
 
 xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
 end
+
+%% 6.7 
+sys_CO = ss( [A, -B_u*K; L*C, A-L*C-B_u*K], [B_d; zeros(4,1)], [C, zeros(2,4)], 0);
+[yy, t_out]=step(sys_CO);
+figure()
+plot(t_out, yy);
