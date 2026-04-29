@@ -1024,7 +1024,8 @@ end
 x0=zeros(4,1);
 % Risolvo
 [x_dot_1, t_out_1, x_out_1] = lsim(sys_cl_1, w, t, x0);
-S_1 = stepinfo(sys_cl_1);
+% S_1_c = stepinfo(sys_cl_1(1,:));
+% S_1_p = stepinfo(sys_cl_1(2,:));
 
 % Seconda coppia di frequenze (w_c = 2 e w_c = 5)
 omega_n1_2 = 2; % Determina poli dominanti, più lenti)
@@ -1050,7 +1051,8 @@ sys_cl_2=ss(A_c_2, B_d, C, D_d);
 
 % Risolvo
 [x_dot_2, t_out_2, x_out_2] = lsim(sys_cl_2, w, t, x0);
-S_2 = stepinfo(sys_cl_2);
+% S_2_c = stepinfo(sys_cl_2(1,:));
+% S_2_p = stepinfo(sys_cl_2(2,:));
 
 % Terza coppia di frequenze (w_c = 5 e w_c = 10)
 omega_n1_3 = 5; % Determina poli dominanti, più lenti)
@@ -1076,7 +1078,8 @@ sys_cl_3=ss(A_c_3, B_d, C, D_d);
 
 % Risolvo
 [x_dot_3, t_out_3, x_out_3] = lsim(sys_cl_3, w, t, x0);
-S_3 = stepinfo(sys_cl_3);
+% S_3_c = stepinfo(sys_cl_3(1,:));
+% S_3_p = stepinfo(sys_cl_3(2,:));
 
 % Grafico della risposta - confronto tra le tre coppie
 figure('Name', '6.2 Scelta dei poli per controllore in spazio di stato')
@@ -1107,67 +1110,153 @@ else
 end
 
 % Posizionamento poli osservatore
-xi_o = 0.7;
-omega_n_o1 = omega_n1_2*3;
-omega_d_o1 = omega_n1_2*sqrt(1-xi_o^2)*3;
-pC_1_o = -xi_o*omega_n_o1 + 1i*omega_d_o1;
-pC_2_o = -xi_o*omega_n_o1 - 1i*omega_d_o1;
+% Mantengo lo smorzamento a 0.7 (scelta ottima)
+% Primo tentativo (poli il doppio più veloci di quelli del controllore
+omega_n_o1_1 = omega_n1_2*2;
+omega_d_o1_1 = omega_n1_2*sqrt(1-xi^2)*2;
+pC_1_o_1 = -xi*omega_n_o1_1 + 1i*omega_d_o1_1;
+pC_2_o_1 = -xi*omega_n_o1_1- 1i*omega_d_o1_1;
 
-omega_n_o2 = omega_n2_2*3;
-omega_d_o2 = omega_n2_2*sqrt(1-xi_o^2)*3;
-pC_3_o = -xi_o*omega_n_o2 + 1i*omega_d_o2;
-pC_4_o = -xi_o*omega_n_o2 - 1i*omega_d_o2;
+omega_n_o2_1 = omega_n2_2*2;
+omega_d_o2_1 = omega_n2_2*sqrt(1-xi^2)*2;
+pC_3_o_1 = -xi*omega_n_o2_1 + 1i*omega_d_o2_1;
+pC_4_o_1 = -xi*omega_n_o2_1 - 1i*omega_d_o2_1;
 
-pC_o = [pC_1_o pC_2_o pC_3_o pC_4_o];
+pC_o_1 = [pC_1_o_1 pC_2_o_1 pC_3_o_1 pC_4_o_1];
 
-lT_o = place(A',C', pC_o);
-L = lT_o';
+lT_o_1 = place(A',C', pC_o_1);
+L_1 = lT_o_1';
+
+% Secondo tentativo (poli il quadruplo più veloci di quelli del
+% controllore)
+omega_n_o1_2 = omega_n1_2*4;
+omega_d_o1_2 = omega_n1_2*sqrt(1-xi^2)*4;
+pC_1_o_2 = -xi*omega_n_o1_2 + 1i*omega_d_o1_2;
+pC_2_o_2 = -xi*omega_n_o1_2- 1i*omega_d_o1_2;
+
+omega_n_o2_2 = omega_n2_2*4;
+omega_d_o2_2 = omega_n2_2*sqrt(1-xi^2)*4;
+pC_3_o_2 = -xi*omega_n_o2_2 + 1i*omega_d_o2_2;
+pC_4_o_2 = -xi*omega_n_o2_2 - 1i*omega_d_o2_2;
+
+pC_o_2 = [pC_1_o_2 pC_2_o_2 pC_3_o_2 pC_4_o_2];
+
+lT_o_2 = place(A',C', pC_o_2);
+L_2 = lT_o_2';
+
+% Terzo tentativo (poli 6 volte più veloci di quelli del controllore)
+omega_n_o1_3 = omega_n1_2*6;
+omega_d_o1_3 = omega_n1_2*sqrt(1-xi^2)*6;
+pC_1_o_3 = -xi*omega_n_o1_3 + 1i*omega_d_o1_3;
+pC_2_o_3 = -xi*omega_n_o1_3- 1i*omega_d_o1_3;
+
+omega_n_o2_3 = omega_n2_2*6;
+omega_d_o2_3 = omega_n2_2*sqrt(1-xi^2)*6;
+pC_3_o_3 = -xi*omega_n_o2_3 + 1i*omega_d_o2_3;
+pC_4_o_3 = -xi*omega_n_o2_3 - 1i*omega_d_o2_3;
+
+pC_o_3 = [pC_1_o_3 pC_2_o_3 pC_3_o_3 pC_4_o_3];
+
+lT_o_3 = place(A',C', pC_o_3);
+L_3 = lT_o_3';
 
 %% TASK 6.5 - Risposta in anello chiuso con compensatore
 % Definizione parametri iniziali
 x0_t = [x0; x0];   % stato iniziale aumentato (8x1)
-[t_out, x_out] = ode23(@(t,x) closed_loop_nonlinear(t, x, K_2, L, A, B_u, B_d, C, invpendulumP), t, x0_t);
+[t_out_o1, x_out_o1] = ode23(@(t,x) closed_loop_nonlinear(t, x, K_2, L_1, A, B_u, B_d, C, invpendulumP), t, x0_t);
+[t_out_o2, x_out_o2] = ode23(@(t,x) closed_loop_nonlinear(t, x, K_2, L_2, A, B_u, B_d, C, invpendulumP), t, x0_t);
+[t_out_o3, x_out_o3] = ode23(@(t,x) closed_loop_nonlinear(t, x, K_2, L_3, A, B_u, B_d, C, invpendulumP), t, x0_t);
 
 % Estrazione variabili
-x_real_out = x_out(:, 1:4);
-x_hat_out  = x_out(:, 5:8);
+x_real_out_o1 = x_out_o1(:, 1:4);
+x_hat_out_o1  = x_out_o1(:, 5:8);
+x_real_out_o2 = x_out_o2(:, 1:4);
+x_hat_out_o2  = x_out_o2(:, 5:8);
+x_real_out_o3 = x_out_o3(:, 1:4);
+x_hat_out_o3  = x_out_o3(:, 5:8);
 
-i_out = (-K_2 * x_hat_out')';
+i_out_o1 = (-K_2 * x_hat_out_o1')';
+i_out_o2 = (-K_2 * x_hat_out_o2')';
+i_out_o3 = (-K_2 * x_hat_out_o3')';
 
 % Errore di stima
-err = x_real_out - x_hat_out;
+err_c_1 = abs(x_real_out_o1(:,1) - x_hat_out_o1(:,1));
+err_p_1 = abs(rad2deg(x_real_out_o1(:,3)-x_hat_out_o1(:,3)));
+err_c_2 = abs(x_real_out_o2(:,1) - x_hat_out_o2(:,1));
+err_p_2 = abs(rad2deg(x_real_out_o2(:,3)-x_hat_out_o2(:,3)));
+err_c_3 = abs(x_real_out_o3(:,1) - x_hat_out_o3(:,1));
+err_p_3 = abs(rad2deg(x_real_out_o3(:,3)-x_hat_out_o3(:,3)));
 
-figure('Name', '6.5 - Ode23 solution with observer')
+figure ('Name', '6.3 - Comparison between different choices for observer poles');
 subplot(3,1,1);
-plot(t_out, i_out, 'LineWidth',2);
+plot(t_out_o1, i_out_o1, 'LineWidth',2);
+hold on;
+plot(t_out_o2, i_out_o2, 'LineWidth',2);
+plot(t_out_o3, i_out_o3, 'LineWidth',2);
+legend('First try', 'Second try', 'Third try');
 xlabel('Time [s]');
 ylabel('Current [A]');
 title ('Current with observer');
 
-
 subplot(3,1,2);
-plot(t_out, x_real_out(:,1), 'LineWidth',2);
+plot(t_out_o1, x_real_out_o1(:,1), 'LineWidth',2);
+hold on;
+plot(t_out_o2, x_real_out_o2(:,1), 'LineWidth',2);
+plot(t_out_o3, x_real_out_o3(:,1), 'LineWidth',2);
+legend('First try', 'Second try', 'Third try');
 xlabel('Time [s]');
 ylabel('Position [m]');
 title ('Cart postion with observer');
 
 subplot(3,1,3);
-plot(t_out, rad2deg(x_real_out(:,3)), 'LineWidth',2);
+plot(t_out_o1, rad2deg(x_real_out_o1(:,3)), 'LineWidth',2);
+hold on;
+plot(t_out_o2, rad2deg(x_real_out_o2(:,3)), 'LineWidth',2);
+plot(t_out_o3, rad2deg(x_real_out_o3(:,3)), 'LineWidth',2);
+legend('First try', 'Second try', 'Third try');
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle with observer');
 
-figure('Name', '6.5 - Error ')
-yyaxis left;
-plot(t_out, err(:,1), 'LineWidth', 2);
-ylabel('Position [m]');
+figure('Name', '6.5 - Error with different poles for observer')
+subplot(2,1,1)
+plot(t_out_o1, err_c_1, 'LineWidth', 2);
 hold on;
-yyaxis right;
-plot(t_out, rad2deg(err(:,3)), 'LineWidth',2);
+plot(t_out_o2, err_c_2, 'LineWidth', 2);
+plot(t_out_o3, err_c_3, 'LineWidth', 2);
+ylabel('Position [m]');
+xlabel('Time [s]');
+legend('First try', 'Second try', 'Third try');
+title('Estimation error in cart position');
+
+subplot(2,1,2)
+plot(t_out_o1, err_p_1, 'LineWidth',2);
+hold on;
+plot(t_out_o2, err_p_2, 'LineWidth',2);
+plot(t_out_o3, err_p_3, 'LineWidth',2);
+ylabel('Pendulum angle [°]');
+xlabel('Time [s]');
+legend('First try', 'Second try', 'Third try');
+title('Estimation error in pendulum angle');
+
+figure('Name', '6.5 - Ode23 solution with observer')
+subplot(3,1,1);
+plot(t_out_o2, i_out_o2, 'LineWidth',2);
+xlabel('Time [s]');
+ylabel('Current [A]');
+title ('Current with observer');
+
+subplot(3,1,2);
+plot(t_out_o2, x_real_out_o2(:,1), 'LineWidth',2);
+xlabel('Time [s]');
+ylabel('Position [m]');
+title ('Cart postion with observer');
+
+subplot(3,1,3);
+plot(t_out_o2, rad2deg(x_real_out_o2(:,3)), 'LineWidth',2);
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
-legend('Cart Position', 'Pendulum angle');
-title('Estimation error');
+title('Pendulum angle with observer');
 
 %% ----------------------- Definizione Funzioni ---------------------------
 % Struttura contenente dati del problema
