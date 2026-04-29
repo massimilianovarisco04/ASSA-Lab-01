@@ -1087,7 +1087,6 @@ plot(t_out_2, x_out_2(:,1), LineWidth=2);
 plot(t_out_3, x_out_3(:,1), 'LineWidth', 2);
 grid on;
 legend('wc = (1,2)', 'wc = (2, 5)', 'wc = (5,10)');
-ylim([-5,5]);
 title('Influenza su posizione carrello');
 
 subplot(1,2,2)
@@ -1097,7 +1096,6 @@ plot(t_out_2, rad2deg(x_out_2(:,3)), LineWidth=2);
 plot(t_out_3, rad2deg(x_out_3(:,3)), 'LineWidth', 2);
 grid on;
 legend('wc = (1,2)', 'wc = (2, 5)', 'wc = (5,10)');
-ylim([-5,5]);
 title('Influenza su angolo pendolo');
 
 %% TASK 6.3 - Test di osservabilità
@@ -1160,7 +1158,6 @@ ylabel('Pendulum angle [°]');
 title('Pendulum angle with observer');
 
 figure('Name', '6.5 - Error ')
-subplot(2,2,4);
 yyaxis left;
 plot(t_out, err(:,1), 'LineWidth', 2);
 ylabel('Position [m]');
