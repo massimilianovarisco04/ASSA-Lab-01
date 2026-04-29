@@ -1051,6 +1051,7 @@ sys_cl_2=ss(A_c_2, B_d, C, D_d);
 
 % Risolvo
 [x_dot_2, t_out_2, x_out_2] = lsim(sys_cl_2, w, t, x0);
+i_out_2 = (-K_2 * x_out_2')';
 % S_2_c = stepinfo(sys_cl_2(1,:));
 % S_2_p = stepinfo(sys_cl_2(2,:));
 
@@ -1239,21 +1240,30 @@ xlabel('Time [s]');
 legend('First try', 'Second try', 'Third try');
 title('Estimation error in pendulum angle');
 
-figure('Name', '6.5 - Ode23 solution with observer')
+figure('Name', '6.5 - Ode23 solution with and without observer')
 subplot(3,1,1);
 plot(t_out_o2, i_out_o2, 'LineWidth',2);
+hold on;
+plot(t_out_2, i_out_2, 'LineWidth',2);
+legend('With Obs', 'Without Obs');
 xlabel('Time [s]');
 ylabel('Current [A]');
 title ('Current with observer');
 
 subplot(3,1,2);
 plot(t_out_o2, x_real_out_o2(:,1), 'LineWidth',2);
+hold on;
+plot(t_out_2, x_out_2(:,1), LineWidth=2);
+legend('With Obs', 'Without Obs');
 xlabel('Time [s]');
 ylabel('Position [m]');
 title ('Cart postion with observer');
 
 subplot(3,1,3);
 plot(t_out_o2, rad2deg(x_real_out_o2(:,3)), 'LineWidth',2);
+hold on;
+plot(t_out_2, rad2deg(x_out_2(:,3)), LineWidth=2);
+legend('With Obs', 'Without Obs');
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle with observer');
