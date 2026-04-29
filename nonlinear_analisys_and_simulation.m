@@ -2,7 +2,7 @@ clear;
 close all;
 clc;
 
-%% Scelta qualitativa del metodo di integrazione (2.1)
+%% TASK 2.1 - Scelta qualitativa del metodo di integrazione
 % Parametri e condizioni iniziali
 invpendulumP = invpendulum_parameters ();
 x_0 = [0; 0; deg2rad(1); 0];
@@ -128,8 +128,7 @@ ylabel('Pendulum angle [°]');
 legend('Benchmark solution','Ode78', 'Location','southeast');
 title ('Pendulum angle - rif vs ode78');
 
-%% Scelta quantitativa del metodo di integrazione (2.1)
-
+%% TASK 2.1 - Scelta quantitativa del metodo di integrazione
 % Calcolo errori assoluti
 xcart_rif45 = interp1(tt, xcart_rif, t45);
 xcart_rif23 = interp1(tt, xcart_rif, t23);
@@ -177,7 +176,7 @@ ylabel('Time of execution');
 xlabel('Solver');
 title('Times of execution');
 
-%% Soluzione con Ode78
+%% TASK 2.1 - Soluzione con Ode78
 figure('Name', '2.1 - Ode78 Solution')
 subplot(2,1,1);
 plot(t78, xcart78, 'LineWidth',2);
@@ -191,7 +190,7 @@ xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle \theta(t)');
 
-%% Sensibilità alle tolleranze (2.1)
+%% TASK 2.1 - Sensibilità alle tolleranze
 % Integrazione con tolleranze di riferimento (RelTol = 1e-3, AbsTol=1e-6)
 % Integrazione con valori di tolleranza più alti (RelTol=1e-6,AbsTol=1e-9)
 tic;
@@ -253,14 +252,14 @@ bar(t_es);
 set(gca, 'XTickLabel', labels);
 title('Times of execution');
 
-%% DISTURBO - Scelta qualitativa del metodo di integrazione (2.2)
+%% TASK 2.2 - Scelta qualitativa del metodo di integrazione
 % Parametri e condizioni iniziali
 invpendulumP = invpendulum_parameters ();
 x_0_d = [0; 0; 0; 0];
 t_0_d = 0;
 t_f_d = 50;
 
-% DISTURBO Integrazione - soluzione di riferimento
+% Integrazione - soluzione di riferimento
 tic;
 ODE_obj = ode;
 ODE_obj.ODEFcn = @(t,x) invpendulumP_f(t,x,@invpendulum_input_d, invpendulumP);
@@ -314,7 +313,7 @@ xcart78_d = x78_d(:,1);
 theta78_d = x78_d(:,3);
 t_es_78_d = toc;
 
-% DISTURBO Grafico - confronto tra riferimento e ode45
+% Grafico - confronto tra riferimento e ode45
 figure('Name', '2.2 - Ode vs Benchmark with Disturb')
 subplot(3, 2, 1)
 plot(tt_d, xcart_rif_d, 'k', 'LineWidth', 2);
@@ -334,7 +333,7 @@ ylabel('Pendulum angle [°]');
 legend('Benchmark solution', 'Ode45', 'Location','southeast');
 title ('Pendulum angle with disturbance - rif vs ode45');
 
-% DISTURBO Grafico - confronto tra riferimento e ode23
+% Grafico - confronto tra riferimento e ode23
 subplot(3,2,3)
 plot(tt_d, xcart_rif_d, 'k', 'LineWidth', 2);
 hold on;
@@ -353,7 +352,7 @@ ylabel('Pendulum angle [°]');
 legend('Benchmark solution', 'Ode23', 'Location','southeast');
 title ('Pendulum angle with disturbance - rif vs ode23');
 
-% DISTURBO Grafico - confronto tra riferimento e ode78
+% Grafico - confronto tra riferimento e ode78
 subplot(3,2,5)
 plot(tt_d, xcart_rif_d, 'k', 'LineWidth', 2);
 hold on;
@@ -372,9 +371,8 @@ ylabel('Pendulum angle [°]');
 legend('Benchmark solution','Ode78', 'Location','southeast');
 title ('Pendulum angle with disturbance - rif vs ode78');
 
-%% DISTURBO - Scelta quantitativa del metodo di integrazione 
-
-% DISTURBO Calcolo errori assoluti
+%% TASK 2.2 - Scelta quantitativa del metodo di integrazione 
+% Calcolo errori assoluti
 xcart_rif45_d = interp1(tt_d, xcart_rif_d, t45_d);
 xcart_rif23_d = interp1(tt_d, xcart_rif_d, t23_d);
 xcart_rif78_d = interp1(tt_d, xcart_rif_d, t78_d);
@@ -421,7 +419,7 @@ ylabel('Time of execution');
 xlabel('Solver');
 title('Times of execution');
 
-%% DISTURBO - Soluzione con Ode23 (Migliore)
+%% TASK 2.2 - Soluzione con Ode23
 % Grafico del disturbo
 u_c = zeros(length(t23_d), 1);
 u_d = zeros(length(t23_d), 1);
@@ -449,7 +447,7 @@ xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle with disturbance \theta(t)');
 
-%% DISTURBO - Sensibilità alle tolleranze
+%% TASK 2.2 - Sensibilità alle tolleranze
 % Integrazione con tolleranze di riferimento (RelTol = 1e-3, AbsTol=1e-6)
 % Integrazione con valori di tolleranza più alti (RelTol=1e-6,AbsTol=1e-9)
 tic;
@@ -511,146 +509,8 @@ bar(t_es_d_t);
 set(gca, 'XTickLabel', labels);
 title('Times of execution');
 
-%% Definizione funzioni
-function invpendulumP = invpendulum_parameters()
-
-M = 0.57;
-rho = 0.36;
-l = 0.64;
-g = 9.81;
-c = 0.1;
-b = 0.005;
-r = 0.02;
-kt = 0.05;
-d_0 = 0.3;
-I_0 = rho*l;
-I_1 = (rho/2)*(l^2);
-I_2 = (rho/3)*(l^3);
-alpha_0 = d_0*l;
-alpha_1 = (d_0/2)*(l^2);
-T1 = 1;
-T2 = 3;
-
-invpendulumP.M = M;
-invpendulumP.rho = rho;
-invpendulumP.l = l;
-invpendulumP.g = g;
-invpendulumP.c = c;
-invpendulumP.b = b;
-invpendulumP.r = r;
-invpendulumP.kt = kt;
-invpendulumP.d_0 = d_0;
-invpendulumP.I_0 = I_0;
-invpendulumP.I_1 = I_1;
-invpendulumP.I_2 = I_2;
-invpendulumP.alpha_0 = alpha_0;
-invpendulumP.alpha_1 = alpha_1;
-invpendulumP.T1 = T1;
-invpendulumP.T2 = T2;
-end
-
-function [u_c, u_d] = invpendulum_input(t, invpendulumP)
-
-kt = invpendulumP.kt;
-r = invpendulumP.r;
-i = 0;
-d = 0;
-u_c = (kt/r)*i;
-u_d = d;
-end
-
-function [u_c, u_d] = invpendulum_input_d(t, invpendulumP)
-
-kt = invpendulumP.kt;
-r = invpendulumP.r;
-T1 = invpendulumP.T1;
-T2 = invpendulumP.T2;
-i = 0; %è corrente, in anello aperto è sempre nulla.
-if t<T1
-    d1 = 0;
-elseif t>T2
-    d1 = 0;
-else
-    d1 = 1;
-end
-u_c = (kt/r)*i; 
-u_d = d1;
-end
-
-function d_f = d_fun(t, invpendulumP)
-
-T1 = invpendulumP.T1;
-T2 = invpendulumP.T2;
-
-if t<T1
-    d1 = 0;
-elseif t>T2
-    d1 = 0;
-else
-    d1 = 1;
-end
-d_f = d1;
-end
-
-function xdot = invpendulumP_f (t,x, input_fun, invpendulumP) %funzione per avere il sistema scritto in spazio di stato
-
-I_1 = invpendulumP.I_1;
-I_2 = invpendulumP.I_2;
-I_0 = invpendulumP.I_0;
-b = invpendulumP.b;
-g = invpendulumP.g;
-alpha_1 = invpendulumP.alpha_1;
-c = invpendulumP.c;
-alpha_0 = invpendulumP.alpha_0;
-M = invpendulumP.M;
-[u_c, u_d] = input_fun(t, invpendulumP);
-
-x1 = x(1);
-x2 = x(2);
-x3 = x(3);
-x4 = x(4);
-u1 = u_c;
-u2 = u_d;
-
-xdot_1 = x2;
-xdot_2 = (-(I_1/I_2)*b*x4*cos(x3)+(I_1^2/I_2)*g*sin(x3)*cos(x3)+(I_1/I_2)*u2*alpha_1*(cos(x3)^2)-I_1*(x4^2)*sin(x3)-c*x2+u1-u2*alpha_0)/(I_0+M-(I_1^2/I_2)*(cos(x3)^2));
-xdot_3 = x4;
-xdot_4 = (I_1*xdot_2*cos(x3)-b*x4+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
-
-xdot = [xdot_1, xdot_2, xdot_3, xdot_4]';
-end
-
-function xdot_d = invpendulumP_fd (t,x, input_fun, invpendulumP) %sistema con disturbo in spazio di stato
-
-I_1 = invpendulumP.I_1;
-I_2 = invpendulumP.I_2;
-I_0 = invpendulumP.I_0;
-b = invpendulumP.b;
-g = invpendulumP.g;
-alpha_1 = invpendulumP.alpha_1;
-c = invpendulumP.c;
-alpha_0 = invpendulumP.alpha_0;
-M = invpendulumP.M;
-[u_c, u_d] = input_fun(t, invpendulumP);
-
-x1 = x(1);
-x2 = x(2);
-x3 = x(3);
-x4 = x(4);
-u1 = u_c;
-u2 = u_d;
-
-xdot_1 = x2;
-xdot_2 = (-(I_1/I_2)*b*x4*cos(x3)+((I_1^2)/I_2)*g*sin(x3)*cos(x3)+(I_1/I_2)*u2*alpha_1*(cos(x3)^2)-I_1*(x4^2)*sin(x3)-c*x2+u1-u2*alpha_0)/(I_0+M-(I_1^2/I_2)*(cos(x3)^2));
-xdot_3 = x4;
-xdot_4 = (I_1*xdot_2*cos(x3)-b*x4+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
-
-xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
-end
-
-
-%% modello linearizzato (4)
-
+%% TASK 3.1 - Simulink
+% Definizione parametri iniziali (servono a simulink)
 I_1 = invpendulumP.I_1;
 I_2 = invpendulumP.I_2;
 I_0 = invpendulumP.I_0;
@@ -662,104 +522,6 @@ alpha_0 = invpendulumP.alpha_0;
 M = invpendulumP.M;
 kt = invpendulumP.kt;
 r = invpendulumP.r;
-
-A = [0 1 0 0;
-    0 -c/(I_0+M-(I_1^2)/I_2) ((I_1^2*g)/I_2)/(I_0+M-(I_1^2)/I_2) (-I_1*b/I_2)/(I_0+M-(I_1^2)/I_2);
-    0 0 0 1;
-    0 -c*I_1/(I_2*(I_0+M-(I_1^2)/I_2)) ((I_1^3*g)/I_2)/(I_2*(I_0+M-(I_1^2)/I_2))+(I_1*g)/I_2 (-I_1^2*b/I_2)/(I_2*(I_0+M-(I_1^2)/I_2))-b/I_2];
-B = [0,0;
-    kt/(r*(I_0+M-(I_1^2)/I_2)),((I_1*alpha_1)/I_2-alpha_0)/(I_0+M-(I_1^2)/I_2);
-    0,0;
-    I_1*kt/(r*I_2*(I_0+M-(I_1^2)/I_2)),((I_1^2*alpha_1)/I_2-I_1*alpha_0)/(I_2*(I_0+M-(I_1^2)/I_2))+alpha_1/I_2];
-
-C = [1 0 0 0;
-    0 0 1 0];
-D = [0,0;0,0];
-x_0 = [0 0 deg2rad(1) 0]';
-
-eig_A = eig(A);
-y = zeros( length(t23_d),2 );
-
-for i = 1 : length(t23_d)
-
-    eAt = expm(A * t23_d(i)); % expm fa l'esponenziale di una matrice
-    y(i,:) = C*eAt*x_0;
-
-end
-
-figure('Name', '4.2 - Linear Model Solution')
-subplot(2,1,1)
-plot(t23_d,y(:,1));
-xlabel('t(s)');
-ylabel('x (m)');
-grid on;
-hold on;
-subplot(2,1,2)
-plot(t23_d,rad2deg(y(:,2)));
-xlabel('t(s)');
-ylabel('\theta (deg)');
-
-%% troviamo il theta limite per avere un errore minore dell'1%
-% Calcoliamo la soluzione del sistema non lineare ponendo theta = 1deg,
-% come per il sistema lineare.
-t_f_d = 50;
-x_0_d = [0; 0; deg2rad(1); 0];
-ODE_objd = ode;
-ODE_objd.ODEFcn = @(t,x) invpendulumP_fd(t,x,@invpendulum_input_d, invpendulumP);
-ODE_objd.InitialValue = x_0_d;
-ODE_objd.Solver = 'ode78';
-ODEResults_obj = solve(ODE_objd, t_0, t_f_d);
-t_d = ODEResults_obj.Time';
-x_d = ODEResults_obj.Solution'; 
-
-% Calcolo la soluzione lineare con il vettore dei tempi del non lineare
-y = zeros( length(t_d),2 );
-for i = 1 : length(t_d)
-
-    eAt = expm(A * t_d(i)); % expm fa l'esponenziale di una matrice
-    y(i,:) = C*eAt*x_0;
-
-end
-
-% definizione parametri per ciclo while
-theta_d = x_d(:,3);
-tol = 1e-2;
-err = 0;
-theta_lim = 0;
-j = 0;
-t_lim = 0;
-
-% ciclo while per calcolare l'errore relativo tra la soluzione lineare e
-% non lineare (metto in gradi perchè ho messo la tolleranza sull'angolo in
-% gradi)
-while err < tol
-    j = j + 1;
-    y (j,2) = rad2deg(y(j,2));
-    theta_d(j) = rad2deg(theta_d(j));
-    err = abs (y(j,2)-theta_d(j))/theta_d(j);
-    theta_lim = y(j,2);
-    t_lim = t_d(j);
-end
-
-% vettore dei tempi fino a t_lim (scelgo j-1 perchè è il valore prima che 
-% la soluzione superi la tolleranza) 
-t_lin = zeros(1,j-1);
-for ii = 1 : j-1
-    t_lin(ii) = t_d(ii);
-end
-
-% plot lineare vs non lineare 
-figure('Name','4.2 - Linear vs Non Linear Comparison')
-plot(t_lin,y(1:1:j-1,2));
-hold on 
-grid on
-plot (t_lin, theta_d(1:1:j-1));
-legend ('Linear','Non Linear');
-xlabel('t(s)');
-ylabel('\theta (deg)');
-
-
-%% simulinksss (3)
 x_0_sim = [0,0]';
 
 % grafico non lineare con simulink (3.1)
@@ -828,6 +590,117 @@ title('Times of execution');
 %simulink gestiscono la risoluzione del problema. (considerazioni finali su
 %latex)
 
+%% TASK 4.2 - modello linearizzato
+% Definizione parametri iniziali
+I_1 = invpendulumP.I_1;
+I_2 = invpendulumP.I_2;
+I_0 = invpendulumP.I_0;
+b = invpendulumP.b;
+g = invpendulumP.g;
+alpha_1 = invpendulumP.alpha_1;
+c = invpendulumP.c;
+alpha_0 = invpendulumP.alpha_0;
+M = invpendulumP.M;
+kt = invpendulumP.kt;
+r = invpendulumP.r;
+
+% Matrici lineari
+A = [0 1 0 0;
+    0 -c/(I_0+M-(I_1^2)/I_2) ((I_1^2*g)/I_2)/(I_0+M-(I_1^2)/I_2) (-I_1*b/I_2)/(I_0+M-(I_1^2)/I_2);
+    0 0 0 1;
+    0 -c*I_1/(I_2*(I_0+M-(I_1^2)/I_2)) ((I_1^3*g)/I_2)/(I_2*(I_0+M-(I_1^2)/I_2))+(I_1*g)/I_2 (-I_1^2*b/I_2)/(I_2*(I_0+M-(I_1^2)/I_2))-b/I_2];
+B = [0,0;
+    kt/(r*(I_0+M-(I_1^2)/I_2)),((I_1*alpha_1)/I_2-alpha_0)/(I_0+M-(I_1^2)/I_2);
+    0,0;
+    I_1*kt/(r*I_2*(I_0+M-(I_1^2)/I_2)),((I_1^2*alpha_1)/I_2-I_1*alpha_0)/(I_2*(I_0+M-(I_1^2)/I_2))+alpha_1/I_2];
+
+C = [1 0 0 0;
+    0 0 1 0];
+D = [0,0;0,0];
+x_0 = [0 0 deg2rad(1) 0]';
+
+eig_A = eig(A);
+y = zeros( length(t23_d),2 );
+
+for i = 1 : length(t23_d)
+
+    eAt = expm(A * t23_d(i)); % expm fa l'esponenziale di una matrice
+    y(i,:) = C*eAt*x_0;
+
+end
+
+% Grafico - modello linearizzato
+figure('Name', '4.2 - Linear Model Solution')
+subplot(2,1,1)
+plot(t23_d,y(:,1));
+xlabel('t(s)');
+ylabel('x (m)');
+grid on;
+hold on;
+subplot(2,1,2)
+plot(t23_d,rad2deg(y(:,2)));
+xlabel('t(s)');
+ylabel('\theta (deg)');
+
+%% TASK 4.2 - Theta limite per avere un errore minore dell'1%
+% Calcolo soluzione del sistema non lineare ponendo theta = 1deg, come per il sistema lineare.
+t_f_d = 50;
+x_0_d = [0; 0; deg2rad(1); 0];
+ODE_objd = ode;
+ODE_objd.ODEFcn = @(t,x) invpendulumP_fd(t,x,@invpendulum_input_d, invpendulumP);
+ODE_objd.InitialValue = x_0_d;
+ODE_objd.Solver = 'ode78';
+ODEResults_obj = solve(ODE_objd, t_0, t_f_d);
+t_d = ODEResults_obj.Time';
+x_d = ODEResults_obj.Solution'; 
+
+% Calcolo soluzione lineare con il vettore dei tempi del non lineare
+y = zeros( length(t_d),2 );
+for i = 1 : length(t_d)
+
+    eAt = expm(A * t_d(i)); % expm fa l'esponenziale di una matrice
+    y(i,:) = C*eAt*x_0;
+
+end
+
+% definizione parametri per ciclo while
+theta_d = x_d(:,3);
+tol = 1e-2;
+err = 0;
+theta_lim = 0;
+j = 0;
+t_lim = 0;
+
+% Calcolo errore relativo tra la soluzione lineare e non lineare 
+% (metto in gradi perchè ho messo la tolleranza sull'angolo in
+% gradi)
+while err < tol
+    j = j + 1;
+    y (j,2) = rad2deg(y(j,2));
+    theta_d(j) = rad2deg(theta_d(j));
+    err = abs (y(j,2)-theta_d(j))/theta_d(j);
+    theta_lim = y(j,2);
+    t_lim = t_d(j);
+end
+
+% vettore dei tempi fino a t_lim (scelgo j-1 perchè è il valore prima che 
+% la soluzione superi la tolleranza) 
+t_lin = zeros(1,j-1);
+for ii = 1 : j-1
+    t_lin(ii) = t_d(ii);
+end
+
+% Grafico comportamento lineare vs non lineare 
+figure('Name','4.2 - Linear vs Non Linear Comparison')
+plot(t_lin,y(1:1:j-1,2));
+hold on 
+grid on
+plot (t_lin, theta_d(1:1:j-1));
+legend ('Linear','Non Linear');
+xlabel('t(s)');
+ylabel('\theta (deg)');
+
+%% NON CAPISCO SE SERVE
 % grafico linearizzato con simulink
 ex2 = sim("simulink_linearizzato_openloop.slx");
 
@@ -847,7 +720,6 @@ ylabel('\theta (deg)');
 grid on;
 % ex3 = sim("simulink_01_nonlineare_per_confronto_con_lineare.slx");
 
-
 % lineare vs non lineare in simulink
 
 % figure()
@@ -860,7 +732,8 @@ grid on;
 % legend("non linear","linear");
 % xlabel('t(s)');
 % ylabel('\theta (deg)');
-%% task 4.3 (linear state-space frictionless model)
+
+%% TASK 4.3 - Modello lineare in spazio di stato senza attriti
 c = 0;
 b = 0;
 A = [0 1 0 0;
@@ -902,7 +775,7 @@ legend("Frictionless","Friction")
 % il sistema senza attriti rimane identico a quello con, per poi divergere
 % piu rapidamente verso l'infinito( causa: no attriti)
 
-%% task 4.4 TRASFER FUNCTIONS
+%% TASK 4.4 - Funzioni di trasferimento
 % For the frictionless linear model derived in the previous step, derive the
 % symbolic expression of the following transfer functions (with inputs i(t),
 % d(t) and outputs x(t), θ(t))
@@ -917,7 +790,7 @@ G_x_d = G(2,1);
 G_theta_i = G(1,2);
 G_theta_d = G(2,2);
 
-%% task 4.5 POLE-ZERO ANALYSIS
+%% TASK 4.5 - Analisi su posizione di poli e zeri
 %Using the numerical values of the parameters, compute and plot the pole
 %zero maps of the transfer functions.
 %Comment on the stability and dynamic properties of the system
@@ -938,8 +811,7 @@ title('G_{\theta d}')
 
 %  tutti con  almeno un polo con parte reale positiva [GAME OVER]
 
-
-%% (5.6)
+%% TASK 5.6 - Risposta in anello chiuso con controllore
 %servono per far girare il simulink
 b = 0;
 c = 0;
@@ -1025,7 +897,8 @@ hold on;
 grid on;
 plot(t23_frictionless, xcart23_frictionless);
 legend('Position Cart (simulink)','Position Cart (matlab)');
-%% 5.7
+
+%% TASK 5.7 - Risposta in anello chiuso con controllore e attriti
 c = invpendulumP.c;
 b=invpendulumP.b;
 
@@ -1051,7 +924,7 @@ ylabel('\theta (deg)');
 grid on;
 legend('Nonlinear with Friction');
 
-%% 5.11
+%% TASK 5.11 - Scelta dei parametri di design per controllore PID
 %faccio un tuning a mano guardando solo la condizione che abbiamo noi (non
 %verifico sovraelongazione nè tempo di assestamento... theta rimane sempre
 %un filo diverso da zero quindi il carrello continua a dare spinta. se ne
@@ -1079,7 +952,7 @@ ylabel('\theta [Degrees] / X [m] / i [A]')
 xlabel('Time [s]');
 legend('Theta', 'X', 'i');
 
-%% (6.1) verifica di controllabilità
+%% TASK 6.1 - Test di controllabilità
 A = [0 1 0 0;
     0 0 ((I_1^2*g)/I_2)/(I_0+M-(I_1^2)/I_2) 0;
     0 0 0 1;
@@ -1107,9 +980,8 @@ if iscontrollable~=1
     fprintf('Il sistema non è controllabile');
 end
 
-%% (6.2)
-
-%% (6.2)
+%% TASK 6.2 - Posizionamento dei poli con controllore in spazio di stato
+% Definizione matrici utili
 B_d = [0;
     ((I_1*alpha_1)/I_2-alpha_0)/(I_0+M-(I_1^2)/I_2);
     0;
@@ -1119,49 +991,116 @@ D_d=[0;0];
 K=zeros(4,1); %è il vettore dei guadagni che andremo a riempire con pole-placement
 %closed loop system matrix:
 
-% Prima coppia (poli dominanti, più lenti)
-xi1 = 0.7;
-omega_n1 = 2;
-omega_d1 = omega_n1*sqrt(1-xi1^2);
-pC_1 = -xi1*omega_n1 + 1i*omega_d1;
-pC_2 = -xi1*omega_n1 - 1i*omega_d1;
+% Mantengo lo smorzamento sempre a 0.7 (valore ottimale)
+xi = 0.7;
+% Prima coppia di frequenze (w_c = 1 e w_c = 2)
+omega_n1_1 = 1; % Determina poli dominanti, più lenti)
+omega_d1_1 = omega_n1_1*sqrt(1-xi^2);
+pC_1_1 = -xi*omega_n1_1 + 1i*omega_d1_1;
+pC_2_1 = -xi*omega_n1_1 - 1i*omega_d1_1;
 
-% Seconda coppia (poli ausiliari, più veloci, es. 5-10x omega_n1)
-xi2 = 0.7;
-omega_n2 = 5;
-omega_d2 = omega_n2*sqrt(1-xi2^2);
-pC_3 = -xi2*omega_n2 + 1i*omega_d2;
-pC_4 = -xi2*omega_n2 - 1i*omega_d2;
+omega_n2_1 = 2; % Determina poli ausiliari,  più veloci, es. 5-10x omega_n1_1
+omega_d2_1 = omega_n2_1*sqrt(1-xi^2);
+pC_3_1 = -xi*omega_n2_1 + 1i*omega_d2_1;
+pC_4_1 = -xi*omega_n2_1 - 1i*omega_d2_1;
 
-pC = [pC_1 pC_2 pC_3 pC_4];
+pC_1 = [pC_1_1 pC_2_1 pC_3_1 pC_4_1];
 
-K = place(A, B_u, pC);  % K sarà 2x4
+K_1 = place(A, B_u, pC_1);  % K sarà 2x4
 %tuning dei poli fatto a buon senso...
 %usiamo la funzione che risolve il problema di trovare i guadagni che
 %mettano i poli proprio dove li vogliamo noi
-A_c=A-B_u*K;
+A_c_1=A-B_u*K_1;
 
 % Definisco il sistema
-sys_cl=ss(A_c, B_d, C, D_d);
+sys_cl_1=ss(A_c_1, B_d, C, D_d);
 
+% Creo un vettore che esprime il disturbo (non posso passarglielo come funzione
 t=0:0.01:10;
-w = zeros(length(t), 1); %è il vettore che esprime il disturbo, non posso passarglielo come funzione
+w = zeros(length(t), 1);
 for k = 1:length(t)
     [~, w(k)] = invpendulum_input_d(t(k), invpendulumP);
 end
 x0=zeros(4,1);
 % Risolvo
-[x_dot, t_out, x_out] = lsim(sys_cl, w, t, x0);
+[x_dot_1, t_out_1, x_out_1] = lsim(sys_cl_1, w, t, x0);
+S_1 = stepinfo(sys_cl_1);
 
-figure('Name', '6.2 - Controllore state-space')
-plot(t_out, x_out(:,1), LineWidth=2);
-hold on
-plot(t_out, rad2deg(x_out(:,3)), LineWidth=2);
+% Seconda coppia di frequenze (w_c = 2 e w_c = 5)
+omega_n1_2 = 2; % Determina poli dominanti, più lenti)
+omega_d1_2 = omega_n1_2*sqrt(1-xi^2);
+pC_1_2 = -xi*omega_n1_2 + 1i*omega_d1_2;
+pC_2_2 = -xi*omega_n1_2 - 1i*omega_d1_2;
+
+omega_n2_2 = 5; % Determina poli ausiliari,  più veloci, es. 5-10x omega_n1_1
+omega_d2_2 = omega_n2_2*sqrt(1-xi^2);
+pC_3_2 = -xi*omega_n2_2 + 1i*omega_d2_2;
+pC_4_2 = -xi*omega_n2_2 - 1i*omega_d2_2;
+
+pC_2 = [pC_1_2 pC_2_2 pC_3_2 pC_4_2];
+
+K_2 = place(A, B_u, pC_2);  % K sarà 2x4
+%tuning dei poli fatto a buon senso...
+%usiamo la funzione che risolve il problema di trovare i guadagni che
+%mettano i poli proprio dove li vogliamo noi
+A_c_2=A-B_u*K_2;
+
+% Definisco il sistema
+sys_cl_2=ss(A_c_2, B_d, C, D_d);
+
+% Risolvo
+[x_dot_2, t_out_2, x_out_2] = lsim(sys_cl_2, w, t, x0);
+S_2 = stepinfo(sys_cl_2);
+
+% Terza coppia di frequenze (w_c = 5 e w_c = 10)
+omega_n1_3 = 5; % Determina poli dominanti, più lenti)
+omega_d1_3 = omega_n1_3*sqrt(1-xi^2);
+pC_1_3 = -xi*omega_n1_3 + 1i*omega_d1_3;
+pC_2_3 = -xi*omega_n1_3 - 1i*omega_d1_3;
+
+omega_n2_3 = 10; % Determina poli ausiliari,  più veloci, es. 5-10x omega_n1_1
+omega_d2_3 = omega_n2_3*sqrt(1-xi^2);
+pC_3_3 = -xi*omega_n2_3 + 1i*omega_d2_3;
+pC_4_3 = -xi*omega_n2_3 - 1i*omega_d2_3;
+
+pC_3 = [pC_1_3 pC_2_3 pC_3_3 pC_4_3];
+
+K_3 = place(A, B_u, pC_3);  % K sarà 2x4
+%tuning dei poli fatto a buon senso...
+%usiamo la funzione che risolve il problema di trovare i guadagni che
+%mettano i poli proprio dove li vogliamo noi
+A_c_3=A-B_u*K_3;
+
+% Definisco il sistema
+sys_cl_3=ss(A_c_3, B_d, C, D_d);
+
+% Risolvo
+[x_dot_3, t_out_3, x_out_3] = lsim(sys_cl_3, w, t, x0);
+S_3 = stepinfo(sys_cl_3);
+
+% Grafico della risposta - confronto tra le tre coppie
+figure('Name', '6.2 Scelta dei poli per controllore in spazio di stato')
+subplot(1,2,1)
+plot(t_out_1, x_out_1(:,1), LineWidth=2);
+hold on;
+plot(t_out_2, x_out_2(:,1), LineWidth=2);
+plot(t_out_3, x_out_3(:,1), 'LineWidth', 2);
 grid on;
-legend('X', '\theta');
+legend('wc = (1,2)', 'wc = (2, 5)', 'wc = (5,10)');
 ylim([-5,5]);
+title('Influenza su posizione carrello');
 
-%% 6.3 Test di osservabilità
+subplot(1,2,2)
+plot(t_out_1, rad2deg(x_out_1(:,3)), LineWidth=2);
+hold on;
+plot(t_out_2, rad2deg(x_out_2(:,3)), LineWidth=2);
+plot(t_out_3, rad2deg(x_out_3(:,3)), 'LineWidth', 2);
+grid on;
+legend('wc = (1,2)', 'wc = (2, 5)', 'wc = (5,10)');
+ylim([-5,5]);
+title('Influenza su angolo pendolo');
+
+%% TASK 6.3 - Test di osservabilità
 O = obsv(A, C);
 if rank(O) == size(A,1)
     fprintf("Il sistema è osservabile\n");
@@ -1171,13 +1110,13 @@ end
 
 % Posizionamento poli osservatore
 xi_o = 0.7;
-omega_n_o1 = omega_n1*3;
-omega_d_o1 = omega_n1*sqrt(1-xi_o^2)*3;
+omega_n_o1 = omega_n1_2*3;
+omega_d_o1 = omega_n1_2*sqrt(1-xi_o^2)*3;
 pC_1_o = -xi_o*omega_n_o1 + 1i*omega_d_o1;
 pC_2_o = -xi_o*omega_n_o1 - 1i*omega_d_o1;
 
-omega_n_o2 = omega_n2*3;
-omega_d_o2 = omega_n2*sqrt(1-xi2^2)*3;
+omega_n_o2 = omega_n2_2*3;
+omega_d_o2 = omega_n2_2*sqrt(1-xi_o^2)*3;
 pC_3_o = -xi_o*omega_n_o2 + 1i*omega_d_o2;
 pC_4_o = -xi_o*omega_n_o2 - 1i*omega_d_o2;
 
@@ -1186,17 +1125,16 @@ pC_o = [pC_1_o pC_2_o pC_3_o pC_4_o];
 lT_o = place(A',C', pC_o);
 L = lT_o';
 
-%% 6.5
-
+%% TASK 6.5 - Risposta in anello chiuso con compensatore
+% Definizione parametri iniziali
 x0_t = [x0; x0];   % stato iniziale aumentato (8x1)
-[t_out, x_out] = ode23(@(t,x) closed_loop_nonlinear(t, x, K, L, A, B_u, B_d, C, invpendulumP), t, x0_t);
+[t_out, x_out] = ode23(@(t,x) closed_loop_nonlinear(t, x, K_2, L, A, B_u, B_d, C, invpendulumP), t, x0_t);
 
-% Estrai le variabili
+% Estrazione variabili
 x_real_out = x_out(:, 1:4);
 x_hat_out  = x_out(:, 5:8);
 
-% Calcola i(t) = u(t) = -K*x_hat
-i_out = (-K * x_hat_out')';
+i_out = (-K_2 * x_hat_out')';
 
 % Errore di stima
 err = x_real_out - x_hat_out;
@@ -1222,37 +1160,154 @@ ylabel('Pendulum angle [°]');
 title('Pendulum angle with observer');
 
 figure('Name', '6.5 - Error ')
-subplot(2,2,4); %va plottato errore
+subplot(2,2,4);
+yyaxis left;
+plot(t_out, err(:,1), 'LineWidth', 2);
+ylabel('Position [m]');
+hold on;
+yyaxis right;
+plot(t_out, rad2deg(err(:,3)), 'LineWidth',2);
+xlabel('Time [s]');
+ylabel('Pendulum angle [°]');
+legend('Cart Position', 'Pendulum angle');
+title('Estimation error');
 
-function xdot_d = nonlinear_per_oss (x, u_c, d_f, invpendulumP) %sistema con disturbo in spazio di stato
-
-I_1 = invpendulumP.I_1;
-I_2 = invpendulumP.I_2;
-I_0 = invpendulumP.I_0;
-b = invpendulumP.b;
-g = invpendulumP.g;
-alpha_1 = invpendulumP.alpha_1;
-c = invpendulumP.c;
-alpha_0 = invpendulumP.alpha_0;
-M = invpendulumP.M;
-kt = invpendulumP.kt;
-r = invpendulumP.r;
-
-x1 = x(1);
-x2 = x(2);
-x3 = x(3);
-x4 = x(4);
-u1 = u_c*kt/r;
-u2 = d_f;
-
-xdot_1 = x2;
-xdot_2 = (-(I_1/I_2)*b*x4*cos(x3)+((I_1^2)/I_2)*g*sin(x3)*cos(x3)+(I_1/I_2)*u2*alpha_1*(cos(x3)^2)-I_1*(x4^2)*sin(x3)-c*x2+u1-u2*alpha_0)/(I_0+M-(I_1^2/I_2)*(cos(x3)^2));
-xdot_3 = x4;
-xdot_4 = (I_1*xdot_2*cos(x3)-b*x4+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
-
-xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
+%% ----------------------- Definizione Funzioni ---------------------------
+% Struttura contenente dati del problema
+function invpendulumP = invpendulum_parameters()
+    M = 0.57;
+    rho = 0.36;
+    l = 0.64;
+    g = 9.81;
+    c = 0.1;
+    b = 0.005;
+    r = 0.02;
+    kt = 0.05;
+    d_0 = 0.3;
+    I_0 = rho*l;
+    I_1 = (rho/2)*(l^2);
+    I_2 = (rho/3)*(l^3);
+    alpha_0 = d_0*l;
+    alpha_1 = (d_0/2)*(l^2);
+    T1 = 1;
+    T2 = 3;
+    
+    invpendulumP.M = M;
+    invpendulumP.rho = rho;
+    invpendulumP.l = l;
+    invpendulumP.g = g;
+    invpendulumP.c = c;
+    invpendulumP.b = b;
+    invpendulumP.r = r;
+    invpendulumP.kt = kt;
+    invpendulumP.d_0 = d_0;
+    invpendulumP.I_0 = I_0;
+    invpendulumP.I_1 = I_1;
+    invpendulumP.I_2 = I_2;
+    invpendulumP.alpha_0 = alpha_0;
+    invpendulumP.alpha_1 = alpha_1;
+    invpendulumP.T1 = T1;
+    invpendulumP.T2 = T2;
 end
 
+% Funzione per definire gli input in risposta libera (i e d assenti)
+function [u_c, u_d] = invpendulum_input(t, invpendulumP)
+    kt = invpendulumP.kt;
+    r = invpendulumP.r;
+    i = 0;
+    d = 0;
+    u_c = (kt/r)*i;
+    u_d = d;
+end
+
+% Funzione per definire gli input in presenza di disturbo
+function [u_c, u_d] = invpendulum_input_d(t, invpendulumP)
+    kt = invpendulumP.kt;
+    r = invpendulumP.r;
+    % T1 = invpendulumP.T1;
+    % T2 = invpendulumP.T2;
+    i = 0; %è corrente, in anello aperto è sempre nulla.
+    % if t<T1
+    %     d1 = 0;
+    % elseif t>T2
+    %     d1 = 0;
+    % else
+    %     d1 = 1;
+    % end
+    u_c = (kt/r)*i; 
+    u_d = d_fun(t, invpendulumP);
+end
+
+% Funzione per descrivere il disturbo
+function d_f = d_fun(t, invpendulumP)
+    T1 = invpendulumP.T1;
+    T2 = invpendulumP.T2;
+    if t<T1
+        d_f = 0;
+    elseif t>T2
+        d_f = 0;
+    else
+        d_f = 1;
+    end
+end
+
+% Funzione per scrivere il sistema in spazio di stato
+function xdot = invpendulumP_f (t,x, input_fun, invpendulumP)
+    I_1 = invpendulumP.I_1;
+    I_2 = invpendulumP.I_2;
+    I_0 = invpendulumP.I_0;
+    b = invpendulumP.b;
+    g = invpendulumP.g;
+    alpha_1 = invpendulumP.alpha_1;
+    c = invpendulumP.c;
+    alpha_0 = invpendulumP.alpha_0;
+    M = invpendulumP.M;
+    [u_c, u_d] = input_fun(t, invpendulumP);
+
+    x1 = x(1);
+    x2 = x(2);
+    x3 = x(3);
+    x4 = x(4);
+    u1 = u_c;
+    u2 = u_d;
+
+    xdot_1 = x2;
+    xdot_2 = (-(I_1/I_2)*b*x4*cos(x3)+(I_1^2/I_2)*g*sin(x3)*cos(x3)+(I_1/I_2)*u2*alpha_1*(cos(x3)^2)-I_1*(x4^2)*sin(x3)-c*x2+u1-u2*alpha_0)/(I_0+M-(I_1^2/I_2)*(cos(x3)^2));
+    xdot_3 = x4;
+    xdot_4 = (I_1*xdot_2*cos(x3)-b*x4+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
+
+    xdot = [xdot_1, xdot_2, xdot_3, xdot_4]';
+end
+
+% Funzione per definire il sistema in spazio di stato con disturbo
+function xdot_d = invpendulumP_fd (t,x, input_fun, invpendulumP)
+    I_1 = invpendulumP.I_1;
+    I_2 = invpendulumP.I_2;
+    I_0 = invpendulumP.I_0;
+    b = invpendulumP.b;
+    g = invpendulumP.g;
+    alpha_1 = invpendulumP.alpha_1;
+    c = invpendulumP.c;
+    alpha_0 = invpendulumP.alpha_0;
+    M = invpendulumP.M;
+    [u_c, u_d] = input_fun(t, invpendulumP);
+
+    x1 = x(1);
+    x2 = x(2);
+    x3 = x(3);
+    x4 = x(4);
+    u1 = u_c;
+    u2 = u_d;
+
+    xdot_1 = x2;
+    xdot_2 = (-(I_1/I_2)*b*x4*cos(x3)+((I_1^2)/I_2)*g*sin(x3)*cos(x3)+(I_1/I_2)*u2*alpha_1*(cos(x3)^2)-I_1*(x4^2)*sin(x3)-c*x2+u1-u2*alpha_0)/(I_0+M-(I_1^2/I_2)*(cos(x3)^2));
+    xdot_3 = x4;
+    xdot_4 = (I_1*xdot_2*cos(x3)-b*x4+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
+    
+    xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
+end
+
+% Funzione per ottenere la risposta del sistema in presenza dell'osservatore
 function dx_t = closed_loop_nonlinear(t, x_t, K, L, A, B_u, ~, C, invpendulumP)
     % Spacchetta il vettore di stato aumentato
     x     = x_t(1:4);    % stato reale (sistema nonlineare)
@@ -1262,7 +1317,7 @@ function dx_t = closed_loop_nonlinear(t, x_t, K, L, A, B_u, ~, C, invpendulumP)
     d_f = d_fun(t, invpendulumP);
 
     % Legge di controllo (usa lo stato stimato)
-    u_c = -K * x_hat;
+    u_c = -K*x_hat;
 
     % Uscita misurata (dal sistema reale)
     y = C * x;
@@ -1279,3 +1334,33 @@ function dx_t = closed_loop_nonlinear(t, x_t, K, L, A, B_u, ~, C, invpendulumP)
 
     dx_t = [x_dot; x_hat_dot];
 end
+
+% Funzione per definire il sistema non lineare da utilizzare con l'osservatore
+function xdot_d = nonlinear_per_oss (x, u_c, d_f, invpendulumP) 
+    I_1 = invpendulumP.I_1;
+    I_2 = invpendulumP.I_2;
+    I_0 = invpendulumP.I_0;
+    b = invpendulumP.b;
+    g = invpendulumP.g;
+    alpha_1 = invpendulumP.alpha_1;
+    c = invpendulumP.c;
+    alpha_0 = invpendulumP.alpha_0;
+    M = invpendulumP.M;
+    kt = invpendulumP.kt;
+    r = invpendulumP.r;
+
+    x1 = x(1);
+    x2 = x(2);
+    x3 = x(3);
+    x4 = x(4);
+    u1 = u_c*kt/r;
+    u2 = d_f;
+    
+    xdot_1 = x2;
+    xdot_2 = (-(I_1/I_2)*b*x4*cos(x3)+((I_1^2)/I_2)*g*sin(x3)*cos(x3)+(I_1/I_2)*u2*alpha_1*(cos(x3)^2)-I_1*(x4^2)*sin(x3)-c*x2+u1-u2*alpha_0)/(I_0+M-(I_1^2/I_2)*(cos(x3)^2));
+    xdot_3 = x4;
+    xdot_4 = (I_1*xdot_2*cos(x3)-b*x4+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
+    
+    xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
+end
+
