@@ -1164,9 +1164,9 @@ L_3 = lT_o_3';
 %% TASK 6.5 - Risposta in anello chiuso con compensatore
 % Definizione parametri iniziali
 x0_t = [x0; x0];   % stato iniziale aumentato (8x1)
-[t_out_o1, x_out_o1] = ode23(@(t,x) closed_loop_nonlinear(t, x, K_2, L_1, A, B_u, B_d, C, invpendulumP), t, x0_t);
-[t_out_o2, x_out_o2] = ode23(@(t,x) closed_loop_nonlinear(t, x, K_2, L_2, A, B_u, B_d, C, invpendulumP), t, x0_t);
-[t_out_o3, x_out_o3] = ode23(@(t,x) closed_loop_nonlinear(t, x, K_2, L_3, A, B_u, B_d, C, invpendulumP), t, x0_t);
+[t_out_o1, x_out_o1] = ode23(@(t,x) closed_loop_nonlinear(t, x, K_2, L_1, A, B_u,  C, invpendulumP), t, x0_t);
+[t_out_o2, x_out_o2] = ode23(@(t,x) closed_loop_nonlinear(t, x, K_2, L_2, A, B_u,  C, invpendulumP), t, x0_t);
+[t_out_o3, x_out_o3] = ode23(@(t,x) closed_loop_nonlinear(t, x, K_2, L_3, A, B_u,  C, invpendulumP), t, x0_t);
 
 % Estrazione variabili
 x_real_out_o1 = x_out_o1(:, 1:4);
@@ -1267,6 +1267,10 @@ legend('With Obs', 'Without Obs');
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle with observer');
+
+%% 6.6 closed loop simultion with simulink
+K = K_2;
+L = L_2;
 
 %% ----------------------- Definizione Funzioni ---------------------------
 % Struttura contenente dati del problema
@@ -1404,21 +1408,20 @@ function xdot_d = invpendulumP_fd (t,x, input_fun, invpendulumP)
 end
 
 % Funzione per ottenere la risposta del sistema in presenza dell'osservatore
-function dx_t = closed_loop_nonlinear(t, x_t, K, L, A, B_u, ~, C, invpendulumP)
-    % Spacchetta il vettore di stato aumentato
+function dx_t = closed_loop_nonlinear(t, x_t, K, L, A, B_u,C, invpendulumP)
     x     = x_t(1:4);    % stato reale (sistema nonlineare)
     x_hat = x_t(5:8);    % stato stimato dall'osservatore
 
-    % Disturbo al tempo t
+    % Disturbo 
     d_f = d_fun(t, invpendulumP);
 
-    % Legge di controllo (usa lo stato stimato)
+    % Legge di controllo 
     u_c = -K*x_hat;
 
-    % Uscita misurata (dal sistema reale)
+    % Uscita misurata 
     y = C * x;
 
-    % --- Sistema NONLINEARE (riscrivi qui le tue equazioni) ---
+    % Sistema NONLINEARE 
     x_dot = nonlinear_per_oss(x, u_c, d_f, invpendulumP);
 
     % --- Osservatore (lineare) ---
