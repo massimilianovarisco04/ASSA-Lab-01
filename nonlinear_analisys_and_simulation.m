@@ -1283,7 +1283,107 @@ plot(ex6.tout,rad2deg(ex6.theta));
 xlabel('t(s)');
 ylabel('\theta (°)');
 
+%% TASK 7 - 
+L1 = 0.076;
+L2 = 0.76;
+L3 = 3.6;
+R = 3.6;
+A_7 = [0 1 0 0 0;
+    0 -c/(I_0+M-(I_1^2)/I_2) ((I_1^2*g)/I_2)/(I_0+M-(I_1^2)/I_2) (-I_1*b/I_2)/(I_0+M-(I_1^2)/I_2) (kt/r)/(I_0+M-(I_1)^2/I_2);
+    0 0 0 1 0;
+    0 -c*I_1/(I_2*(I_0+M-(I_1^2)/I_2)) ((I_1^3*g)/I_2)/(I_2*(I_0+M-(I_1^2)/I_2))+(I_1*g)/I_2 (-I_1^2*b/I_2)/(I_2*(I_0+M-(I_1^2)/I_2))-b/I_2 ((kt/r)*(I_1/I_2))/((I_0+M-(I_1)^2/I_2));
+    0 0 0 -kt/L -R/L];
+B_7 = [0,0;
+    0,((I_1*alpha_1)/I_2-alpha_0)/(I_0+M-(I_1^2)/I_2);
+    0,0;
+    0,((I_1^2*alpha_1)/I_2-I_1*alpha_0)/(I_2*(I_0+M-(I_1^2)/I_2))+alpha_1/I_2
+    1/L, 0];
+C_7 = [1 0 0 0 0;
+    0 0 1 0 0];
+D_7 = [0,0;0,0];
+Co=ctrb(A_7, B_7);
+n=size(A_7,1);
+iscontrollable=(rank(Co)==n);
+if iscontrollable~=1
+    fprintf('Il sistema non è controllabile');
+end
+% Controllabile
 
+% Controllore con ingresso tensione
+B_u_7 = B_7(:,1);
+K_7=zeros(5,1); %è il vettore dei guadagni che andremo a riempire con pole-placement
+%closed loop system matrix:
+
+pC_elettrico1 = -R/L1;
+pC_elettrico2 = -R/L2;
+pC_elettrico3 = -R/L3;
+
+pC1 = [pC_2, pC_elettrico1];
+pC2 = [pC_2, pC_elettrico2];
+pC3 = [pC_2, pC_elettrico3];
+
+K1 = place(A_7, B_u_7, pC1);  % K sarà 2x4
+K2 = place(A_7, B_u_7, pC2);
+K3 = place(A_7, B_u_7, pC3);
+%tuning dei poli fatto a buon senso...
+%usiamo la funzione che risolve il problema di trovare i guadagni che
+%mettano i poli proprio dove li vogliamo noi
+A_c_7_1=A_7-B_u_7*K1;
+A_c_7_2=A_7-B_u_7*K2;
+A_c_7_3=A_7-B_u_7*K3;
+x0_7 = zeros (5,1);
+
+sys_cl1=ss(A_c_7_1, B_7(:,2), C_7, D_d);
+sys_cl2=ss(A_c_7_2, B_7(:,2), C_7, D_d);
+sys_cl3=ss(A_c_7_3, B_7(:,2), C_7, D_d);
+
+% Risolvo
+[x_dot_7_1, t_out_7_1, x_out_7_1] = lsim(sys_cl1, w, t, x0_7);
+[x_dot_7_2, t_out_7_2, x_out_7_2] = lsim(sys_cl2, w, t, x0_7);
+[x_dot_7_3, t_out_7_3, x_out_7_3] = lsim(sys_cl3, w, t, x0_7);
+v_out_1 = (-K1 * x_out_7_1')';
+v_out_2 = (-K2 * x_out_7_2')';
+v_out_3 = (-K3 * x_out_7_3')';
+
+
+figure('Name', 'Actuator dynamics - cart position')
+plot(t_out_7, x_out_7(:,1), 'LineWidth',2);
+hold on;
+plot (t_out_2, x_out_2(:,1), 'LineWidth', 2);
+legend('Actuator', 'Non actuator');
+
+figure('Name', 'Actuator dynamics - pendulum angle')
+plot(t_out_7, rad2deg(x_out_7(:,3)), 'LineWidth', 2);
+hold on;
+plot(t_out_2, rad2deg(x_out_2(:,3)), 'LineWidth', 2);
+legend('Actuator', 'Non actuator');
+
+figure('Name', 'Actuator dynamics - current')
+plot(t_out_7, x_out_7(:,5), 'LineWidth', 2);
+hold on;
+plot(t_out_2, i_out_2, 'LineWidth', 2);
+legend('Actuator', 'Non actuator');
+
+figure('Name', 'Comparison with different L - cart position')
+plot(t_out_7_1, x_out_7_1(:,1), 'LineWidth',2);
+hold on;
+plot (t_out_7_2, x_out_7_2(:,1), 'LineWidth', 2);
+plot (t_out_7_3, x_out_7_3(:,1), 'LineWidth', 2);
+legend('L1', 'L2', 'L3');
+
+figure('Name', 'Comparison with different L - pendulum angle')
+plot(t_out_7_1, rad2deg(x_out_7_1(:,3)), 'LineWidth',2);
+hold on;
+plot (t_out_7_2, rad2deg(x_out_7_2(:,3)), 'LineWidth', 2);
+plot (t_out_7_3, rad2deg(x_out_7_3(:,3)), 'LineWidth', 2);
+legend('L1', 'L2', 'L3');
+
+figure('Name', 'Comparison with different L - current')
+plot(t_out_7_1, x_out_7_1(:,5), 'LineWidth',2);
+hold on;
+plot (t_out_7_2, x_out_7_2(:,5), 'LineWidth', 2);
+plot (t_out_7_3, x_out_7_3(:,5), 'LineWidth', 2);
+legend('L1', 'L2', 'L3');
 
 
 %% ----------------------- Definizione Funzioni ---------------------------
