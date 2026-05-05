@@ -1271,6 +1271,20 @@ title('Pendulum angle with observer');
 %% 6.6 closed loop simultion with simulink
 K = K_2;
 L = L_2;
+ex6 = sim("simulink_01_compensator.slx");
+
+figure('Name', '6.6 - Simulink Solution')
+subplot(2,1,1);
+plot(ex6.tout,ex6.x);
+xlabel('t(s)');
+ylabel('x (m)');
+subplot(2,1,2);
+plot(ex6.tout,rad2deg(ex6.theta));
+xlabel('t(s)');
+ylabel('\theta (°)');
+
+
+
 
 %% ----------------------- Definizione Funzioni ---------------------------
 % Struttura contenente dati del problema
