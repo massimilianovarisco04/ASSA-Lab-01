@@ -900,29 +900,45 @@ legend('Position Cart (simulink)','Position Cart (matlab)');
 
 %% TASK 5.7 - Risposta in anello chiuso con controllore e attriti
 c = invpendulumP.c;
-b=invpendulumP.b;
+b = invpendulumP.b;
 
 % usiamo i guadagni trovati nel 5.4 per andare a vedere theta(t) e i(t) nel
 % tempo , usando il modello non lineare senza attriti, con condizioni
 % iniziali zero. (Si puo fare anche una simulazione in matlab o solo in simulink?) 
 
 ex5 = sim('simulink_nonlineare_attrito.slx');
-% Simulate the nonlinear model with friction and plot results
-figure('Name', '4.6 - Nonlinear Model with Friction')
-subplot(2,1,1);
-title('Position Cart with Friction');
-plot(ex5.tout, ex5.x);
+ex5p2 = sim('simulink_nonlineare_nonattrito_closedloop.slx');
+
+figure('Name', '5.7 - Nonlinear Model with Friction')
+subplot(3,1,1);
+title('Position Cart');
+plot(ex5.tout, ex5.x,'LineWidth',2);
+hold on;
+plot(ex5p2.tout, ex5p2.x,'LineWidth',2);
 xlabel('t(s)');
 ylabel('x (m)');
 grid on;
+legend ('Friction','Frictionless');
 
-subplot(2,1,2);
-title('Position Cart with Friction');
-plot(ex5.tout, rad2deg(ex5.theta));
+subplot(3,1,2);
+title('Pendulum Angle');
+plot(ex5.tout, rad2deg(ex5.theta),'LineWidth',2);
+hold on;
+plot(ex5p2.tout, rad2deg(ex5p2.theta),'LineWidth',2);
 xlabel('t(s)');
 ylabel('\theta (deg)');
 grid on;
-legend('Nonlinear with Friction');
+legend ('Friction','Frictionless');
+
+subplot(3,1,3);
+title('Current');
+plot(ex5.tout, ex5.input,'LineWidth',2);
+hold on;
+plot(ex5p2.tout, ex5p2.input,'LineWidth',2);
+xlabel('t(s)');
+ylabel('I(A)');
+grid on;
+legend ('Friction','Frictionless');
 
 %% TASK 5.11 - Scelta dei parametri di design per controllore PID
 %faccio un tuning a mano guardando solo la condizione che abbiamo noi (non
