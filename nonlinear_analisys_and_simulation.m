@@ -1285,19 +1285,73 @@ ylabel('Pendulum angle [°]');
 title('Pendulum angle with observer');
 
 %% 6.6 closed loop simultion with simulink
-K = K_2;
-L = L_2;
+
 ex6 = sim("simulink_01_compensator.slx");
 
 figure('Name', '6.6 - Simulink Solution')
-subplot(2,1,1);
-plot(ex6.tout,ex6.x);
+subplot(3,1,1);
+plot(ex6.tout,ex6.x,'LineWidth',2);
 xlabel('t(s)');
-ylabel('x (m)');
-subplot(2,1,2);
-plot(ex6.tout,rad2deg(ex6.theta));
+ylabel('x(m)');
+grid on;
+subplot(3,1,2);
+plot(ex6.tout,ex6.input,'LineWidth',2);
 xlabel('t(s)');
-ylabel('\theta (°)');
+ylabel('I(A)');
+grid on;
+subplot(3,1,3);
+plot(ex6.tout,rad2deg(ex6.theta),'LineWidth',2);
+xlabel('t(s)');
+ylabel('\theta (deg)');
+grid on;
+
+err_sim_x     = abs(ex6.x(:,1) - ex6.x_hat(:,1));
+err_sim_theta = abs(rad2deg(ex6.theta(:,1)- ex6.x_hat(:,3)));
+
+figure('Name', '6.6 - Error Comparison')
+subplot(2,1,1)
+plot(ex6.tout, err_sim_x, 'LineWidth',2);
+ylabel('Position [m]');
+xlabel('Time [s]');
+title('Estimation error in cart position');
+grid on;
+subplot(2,1,2)
+plot(ex6.tout, err_sim_theta, 'LineWidth',2);
+ylabel('Pendulum angle [°]');
+xlabel('Time [s]');
+title('Estimation error in pendulum angle');
+grid on;
+
+
+
+figure('Name', '6.6 -  Solution with and without observer')
+subplot(3,1,1);
+plot(ex6.tout, ex6.input, 'LineWidth',2);
+hold on;
+plot(t_out_2, i_out_2, 'LineWidth',2);
+legend('With Obs', 'Without Obs');
+xlabel('Time [s]');
+ylabel('Current [A]');
+title ('Current with observer');
+
+subplot(3,1,2);
+plot(ex6.tout, ex6.x, 'LineWidth',2);
+hold on;
+plot(t_out_2, x_out_2(:,1), LineWidth=2);
+legend('With Obs', 'Without Obs');
+xlabel('Time [s]');
+ylabel('Position [m]');
+title ('Cart postion with observer');
+
+subplot(3,1,3);
+plot(ex6.tout, rad2deg(ex6.theta), 'LineWidth',2);
+hold on;
+plot(t_out_2, rad2deg(x_out_2(:,3)), LineWidth=2);
+legend('With Obs', 'Without Obs');
+xlabel('Time [s]');
+ylabel('Pendulum angle [°]');
+title('Pendulum angle with observer');
+
 
 %% TASK 7 - 
 L1 = 0.076;
