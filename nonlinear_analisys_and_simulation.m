@@ -445,8 +445,8 @@ u_d = zeros(length(t23_d), 1);
 for i = 1 : length(t23_d)
     [u_c(i), u_d(i)] = invpendulum_input_d(t23_d(i), invpendulumP);
 end
-figure ('Name', '2.2 - Disturb')
-plot(t23_d, u_d, 'LineWidth',2);
+figure('Name', '2.2 - Disturb')
+plot(t23_d, u_d, 'LineWidth', 2.5);
 grid on;
 xlabel('Time [s]');
 ylabel('Disturbance [N/m]');
@@ -455,14 +455,14 @@ title('Disturbance');
 % Grafico - soluzione con disturbo
 figure('Name', '2.2 - Ode23 Solution with Disturbance')
 subplot(2,1,1);
-plot(t23_d, xcart23_d, 'LineWidth',2);
+plot(t23_d, xcart23_d, 'LineWidth', 2.5);
 grid on;
 xlabel('Time [s]');
 ylabel('Position [m]');
-title ('Cart postion with disturbance x(t)');
+title('Cart position with disturbance x(t)');
 
 subplot(2,1,2);
-plot(t23_d, rad2deg(theta23_d), 'LineWidth',2);
+plot(t23_d, rad2deg(theta23_d), 'LineWidth', 2.5);
 grid on;
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
@@ -651,17 +651,22 @@ end
 % Grafico - modello linearizzato
 figure('Name', '4.2 - Linear Model Solution')
 subplot(2,1,1)
-plot(t23_d,y(:,1));
-xlabel('t(s)');
-ylabel('x (m)');
+plot(t23_d, y(:,1), 'LineWidth', 2.5);
 grid on;
-hold on;
-subplot(2,1,2)
-plot(t23_d,rad2deg(y(:,2)));
-xlabel('t(s)');
-ylabel('\theta (deg)');
+xlabel('Time [s]');
+ylabel('Position [m]');
+title('Cart position x(t)');
+xlim([0 1.5]);
 
-%% TASK 4.2 - Theta limite per avere un errore minore dell'1%
+subplot(2,1,2)
+plot(t23_d, rad2deg(y(:,2)), 'LineWidth', 2.5);
+grid on;
+xlabel('Time [s]');
+ylabel('Pendulum angle [°]');
+title('Pendulum angle \theta(t)');
+xlim([0 1.5]);
+
+%Theta limite per avere un errore minore dell'1%
 % Calcolo soluzione del sistema non lineare ponendo theta = 1deg, come per il sistema lineare.
 t_f_d = 50;
 x_0_d = [0; 0; deg2rad(1); 0];
@@ -706,33 +711,36 @@ for ii = 1 : j-1
 end
 
 % Grafico comportamento lineare vs non lineare 
-figure('Name','4.2 - Linear vs Non Linear Comparison')
-plot(t_lin,y(1:1:j-1,2));
-hold on 
-grid on
-plot (t_lin, theta_d(1:1:j-1));
-legend ('Linear','Non Linear');
-xlabel('t(s)');
-ylabel('\theta (deg)');
+figure('Name', '4.2 - Linear vs Non Linear Comparison')
+plot(t_lin, y(1:1:j-1, 2), 'k', 'LineWidth', 2.5);
+hold on;
+plot(t_lin, theta_d(1:1:j-1), 'r', 'LineWidth', 2.5);
+grid on;
+xlabel('Time [s]');
+ylabel('Pendulum angle [°]');
+xlim([0.5 0.7]);
+ylim([10 18.1]);
+legend('Linear', 'Non Linear', 'Location', 'southeast');
+title('Linear vs Non Linear - Pendulum angle \theta(t)');
 
 %% NON CAPISCO SE SERVE
 % grafico linearizzato con simulink
-ex2 = sim("simulink_linearizzato_openloop.slx");
-
-figure()
-subplot(2,1,1);
-title('Position Cart');
-plot(ex2.tout,ex2.x_lin);
-xlabel('t(s)');
-ylabel('x (m)');
-
-grid on;
-subplot(2,1,2);
-title('Pendulum Angle')
-plot(ex2.tout,ex2.theta_lin);
-xlabel('t(s)');
-ylabel('\theta (deg)');
-grid on;
+% ex2 = sim("simulink_linearizzato_openloop.slx");
+% 
+% figure()
+% subplot(2,1,1);
+% title('Position Cart');
+% plot(ex2.tout,ex2.x_lin);
+% xlabel('t(s)');
+% ylabel('x (m)');
+% 
+% grid on;
+% subplot(2,1,2);
+% title('Pendulum Angle')
+% plot(ex2.tout,ex2.theta_lin);
+% xlabel('t(s)');
+% ylabel('\theta (deg)');
+% grid on;
 % ex3 = sim("simulink_01_nonlineare_per_confronto_con_lineare.slx");
 
 % lineare vs non lineare in simulink
@@ -769,20 +777,20 @@ invpendulumP.sys = ss(A,B,C,D);
 figure('Name', '4.3 - Linear Frictionless Model')
 subplot(2,1,1);
 title('Position Cart');
-plot(tt,yy(:,1));
+plot(tt,yy(:,1), Linewidth=2.5);
 xlabel('t(s)');
 ylabel('x (m)');
 hold on;
-plot(t_lin,y(1:1:j-1,1));
+plot(t_lin,y(1:1:j-1,1), Linewidth=2.5);
 grid on;
 legend("Frictionless","Friction")
 
 subplot(2,1,2);
 title('Pendulum Angle')
-plot(tt,rad2deg(yy(:,2)));
+plot(tt,rad2deg(yy(:,2)), Linewidth=2.5);
 grid on;
 hold on; 
-plot(t_lin,y(1:1:j-1,2));
+plot(t_lin,y(1:1:j-1,2), Linewidth=2.5);
 xlabel('t(s)');
 ylabel('\theta (deg)');
 legend("Frictionless","Friction")
@@ -838,26 +846,24 @@ theta23_frictionless = x23_frictionless(:,3);
 ex5 = sim('simulink_nonlineare_nonattrito_closedloop.slx');
 
 figure('Name', '5.6 - Pendulum Angle without Friction');
-plot(ex5.tout, rad2deg(ex5.theta));
 xlabel('t(s)');
 ylabel('\theta (deg)');
 hold on;
 grid on;
-plot(t23_frictionless,rad2deg(theta23_frictionless));
-legend('Pendulum Angle without Friction (simulink)','Pendulum Angle without Friction (matlab)');
+plot(t23_frictionless,rad2deg(theta23_frictionless), Linewidth=2.5);
+legend('Pendulum Angle without Friction');
 
 % Ricalcolo dell'input PD 
 theta_rif = 0; 
 u1_feedback = kp * (theta_rif - x23_frictionless(:,3)) + kd * (-x23_frictionless(:,4));
 
 figure('Name','5.6 - Input ');
-plot(ex5.tout, ex5.input);
 xlabel('t(s)');
 ylabel('i(A)'); % controllate pls
 hold on;
-plot(t23_frictionless, u1_feedback);
+plot(t23_frictionless, u1_feedback, Linewidth=2.5);
 grid on;
-legend('Input feedback (simulink)','Input feedback (matlab)');
+legend('Input feedback');
 function xdot_d = invpendulumP_frictionless (t,x,kd,kp, input_fun, invpendulumP) 
 %sistema con disturbo in spazio di stato senza attriti
 
@@ -892,14 +898,17 @@ xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
 end
 
 % Simulate the nonlinear model with friction and plot results
-figure('Name', '5.6 - Position Cart');
-plot(ex5.tout, ex5.x);
+figure('Name', '5.6 - Cart Position');
 xlabel('t(s)');
 ylabel('x (m)');
 hold on;
 grid on;
-plot(t23_frictionless, xcart23_frictionless);
-legend('Position Cart (simulink)','Position Cart (matlab)');
+plot(t23_frictionless, xcart23_frictionless, Linewidth=2.5);
+legend('Cart Position');
+
+%nei plot e nel latex non abbiamo inserito i dati del modello simulink perchè sono
+%esattamente coincidenti con quelli di matlab, non si nota alcuna
+%differenza. 
 
 %% TASK 5.7 - Risposta in anello chiuso con controllore e attriti
 c = invpendulumP.c;
@@ -998,7 +1007,7 @@ B_d = [0;
     ((I_1^2*alpha_1)/I_2-I_1*alpha_0)/(I_2*(I_0+M-(I_1^2)/I_2))+alpha_1/I_2];
 D_d=[0;0];
 
-K=zeros(4,1)
+K=zeros(4,1);
 
 % Mantengo lo smorzamento sempre a 0.7 (valore ottimale)
 xi = 0.7;
