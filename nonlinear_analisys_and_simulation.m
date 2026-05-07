@@ -11,11 +11,7 @@ t_f = 100;
 
 % Integrazione - soluzione di riferimento
 tic;
-ODE_obj = ode; 
-% ode da matlab 2023 permette di interagire in questo modo con la funzione
-% ODE, in modo da rendere tutto anche più leggibile per chi legge il codice
-% senza averlo fatto. si potrebbe anche fare l'approccio più diretto
-% chiamando direttamente ode45 per esempio, ma questo è meglio. 
+ODE_obj = ode;  
 ODE_obj.ODEFcn = @(t,x) invpendulumP_f(t,x,@invpendulum_input, invpendulumP);
 ODE_obj.InitialValue = x_0;
 ODE_obj.Solver = 'ode89';
@@ -546,8 +542,7 @@ grid on;
 
 %confronto fra grafico non lineare in simulink e quello ottenuto con ode89
 %in matlab (benchmark e ode78). Le impostazioni del solutore simulink sono
-%state lasciate STANDARD per effettuare il confronto (considerazioni finali
-%su latex)
+%state lasciate STANDARD per effettuare il confronto.
 figure('Name', '3.1 - Simulink Solution vs MATLAB Solution')
 subplot(3,1,1)
 plot(ex1.tout,ex1.x, 'LineWidth', 2);
@@ -586,9 +581,6 @@ bar(t_es);
 set(gca, 'XTickLabel', {'MATLAB (Ode23)', 'Simulink (Ode23)'});
 ylabel('Execution Time [s]');
 title('Times of execution');
-%la grossa differenza temporale è data dal diverso modo in cui matlab e
-%simulink gestiscono la risoluzione del problema. (considerazioni finali su
-%latex)
 
 %% TASK 4.2 - modello linearizzato
 % Definizione parametri iniziali
@@ -624,7 +616,7 @@ y = zeros( length(t23_d),2 );
 
 for i = 1 : length(t23_d)
 
-    eAt = expm(A * t23_d(i)); % expm fa l'esponenziale di una matrice
+    eAt = expm(A * t23_d(i));
     y(i,:) = C*eAt*x_0;
 
 end
@@ -658,7 +650,7 @@ x_d = ODEResults_obj.Solution';
 y = zeros( length(t_d),2 );
 for i = 1 : length(t_d)
 
-    eAt = expm(A * t_d(i)); % expm fa l'esponenziale di una matrice
+    eAt = expm(A * t_d(i));
     y(i,:) = C*eAt*x_0;
 
 end
@@ -672,8 +664,6 @@ j = 0;
 t_lim = 0;
 
 % Calcolo errore relativo tra la soluzione lineare e non lineare 
-% (metto in gradi perchè ho messo la tolleranza sull'angolo in
-% gradi)
 while err < tol
     j = j + 1;
     y (j,2) = rad2deg(y(j,2));
@@ -683,8 +673,6 @@ while err < tol
     t_lim = t_d(j);
 end
 
-% vettore dei tempi fino a t_lim (scelgo j-1 perchè è il valore prima che 
-% la soluzione superi la tolleranza) 
 t_lin = zeros(1,j-1);
 for ii = 1 : j-1
     t_lin(ii) = t_d(ii);
@@ -771,18 +759,11 @@ plot(t_lin,y(1:1:j-1,2));
 xlabel('t(s)');
 ylabel('\theta (deg)');
 legend("Frictionless","Friction")
-% nell'intorno del punto di equlibrio instabile, dove vale l'approssimazione lineare,
-% il sistema senza attriti rimane identico a quello con, per poi divergere
-% piu rapidamente verso l'infinito( causa: no attriti)
 
 %% TASK 4.4 - Funzioni di trasferimento
-% For the frictionless linear model derived in the previous step, derive the
-% symbolic expression of the following transfer functions (with inputs i(t),
-% d(t) and outputs x(t), θ(t))
-
 sys = ss(A, B, C, D);
 
-% Converti in funzione di trasferimento G(s)
+% Conversione in funzione di trasferimento G(s)
 G = tf(sys);
 
 G_x_i = G(1,1);
@@ -791,10 +772,6 @@ G_theta_i = G(1,2);
 G_theta_d = G(2,2);
 
 %% TASK 4.5 - Analisi su posizione di poli e zeri
-%Using the numerical values of the parameters, compute and plot the pole
-%zero maps of the transfer functions.
-%Comment on the stability and dynamic properties of the system
-
 figure('Name', '4.5 - Pole-Zero analysis')
 subplot(2,2,1)
 pzmap(G_x_i);
@@ -809,13 +786,10 @@ subplot(2,2,4)
 pzmap(G_theta_d);
 title('G_{\theta d}')
 
-%  tutti con  almeno un polo con parte reale positiva [GAME OVER]
-
 %% TASK 5.6 - Risposta in anello chiuso con controllore
-%servono per far girare il simulink
+% Parametri necessari a simulink
 b = 0;
 c = 0;
-
 xi = 0.7;
 omega_n = 10;
 kd= 1.5;
@@ -835,7 +809,7 @@ xcart23_frictionless = x23_frictionless(:,1);
 theta23_frictionless = x23_frictionless(:,3);
 
 ex5 = sim('simulink_nonlineare_nonattrito_closedloop.slx');
-% Simulate the nonlinear model without friction and plot results
+
 figure('Name', '5.6 - Pendulum Angle without Friction');
 plot(ex5.tout, rad2deg(ex5.theta));
 xlabel('t(s)');
@@ -844,6 +818,7 @@ hold on;
 grid on;
 plot(t23_frictionless,rad2deg(theta23_frictionless));
 legend('Pendulum Angle without Friction (simulink)','Pendulum Angle without Friction (matlab)');
+
 % Ricalcolo dell'input PD 
 theta_rif = 0; 
 u1_feedback = kp * (theta_rif - x23_frictionless(:,3)) + kd * (-x23_frictionless(:,4));
@@ -874,6 +849,7 @@ x1 = x(1);
 x2 = x(2);
 x3 = x(3);
 x4 = x(4);
+
 % inseriamo il PD all'interno della nostra funzione 
 theta_rif = 0;
 u1 =  (kp * (theta_rif - x(3)) + kd * (- x(4)))*(kt/r);
@@ -901,10 +877,6 @@ legend('Position Cart (simulink)','Position Cart (matlab)');
 %% TASK 5.7 - Risposta in anello chiuso con controllore e attriti
 c = invpendulumP.c;
 b = invpendulumP.b;
-
-% usiamo i guadagni trovati nel 5.4 per andare a vedere theta(t) e i(t) nel
-% tempo , usando il modello non lineare senza attriti, con condizioni
-% iniziali zero. (Si puo fare anche una simulazione in matlab o solo in simulink?) 
 
 ex5 = sim('simulink_nonlineare_attrito.slx');
 ex5p2 = sim('simulink_nonlineare_nonattrito_closedloop.slx');
@@ -941,15 +913,10 @@ grid on;
 legend ('Friction','Frictionless');
 
 %% TASK 5.11 - Scelta dei parametri di design per controllore PID
-%faccio un tuning a mano guardando solo la condizione che abbiamo noi (non
-%verifico sovraelongazione nè tempo di assestamento... theta rimane sempre
-%un filo diverso da zero quindi il carrello continua a dare spinta. se ne
-%va via il carrello, che potrebbe anche andare bene ma non so perchè theta
-%non vada a zero preciso. non trovo il modo. 
 kp = 8;        
 ki = 2;   
 kd = 1;
-%821 è lo standard
+
 if ki>(9.336*kp-29.32)*kd
     fprintf('il regolatore non va bene!\n');
 end
@@ -1004,8 +971,7 @@ B_d = [0;
     ((I_1^2*alpha_1)/I_2-I_1*alpha_0)/(I_2*(I_0+M-(I_1^2)/I_2))+alpha_1/I_2];
 D_d=[0;0];
 
-K=zeros(4,1); %è il vettore dei guadagni che andremo a riempire con pole-placement
-%closed loop system matrix:
+K=zeros(4,1)
 
 % Mantengo lo smorzamento sempre a 0.7 (valore ottimale)
 xi = 0.7;
@@ -1022,16 +988,13 @@ pC_4_1 = -xi*omega_n2_1 - 1i*omega_d2_1;
 
 pC_1 = [pC_1_1 pC_2_1 pC_3_1 pC_4_1];
 
-K_1 = place(A, B_u, pC_1);  % K sarà 2x4
-%tuning dei poli fatto a buon senso...
-%usiamo la funzione che risolve il problema di trovare i guadagni che
-%mettano i poli proprio dove li vogliamo noi
+K_1 = place(A, B_u, pC_1); 
 A_c_1=A-B_u*K_1;
 
 % Definisco il sistema
 sys_cl_1=ss(A_c_1, B_d, C, D_d);
 
-% Creo un vettore che esprime il disturbo (non posso passarglielo come funzione
+% Creo un vettore che esprime il disturbo (non posso passarglielo come funzione)
 t=0:0.01:10;
 w = zeros(length(t), 1);
 for k = 1:length(t)
@@ -1040,26 +1003,21 @@ end
 x0=zeros(4,1);
 % Risolvo
 [x_dot_1, t_out_1, x_out_1] = lsim(sys_cl_1, w, t, x0);
-% S_1_c = stepinfo(sys_cl_1(1,:));
-% S_1_p = stepinfo(sys_cl_1(2,:));
 
 % Seconda coppia di frequenze (w_c = 2 e w_c = 5)
-omega_n1_2 = 2; % Determina poli dominanti, più lenti)
+omega_n1_2 = 2;
 omega_d1_2 = omega_n1_2*sqrt(1-xi^2);
 pC_1_2 = -xi*omega_n1_2 + 1i*omega_d1_2;
 pC_2_2 = -xi*omega_n1_2 - 1i*omega_d1_2;
 
-omega_n2_2 = 5; % Determina poli ausiliari,  più veloci, es. 5-10x omega_n1_1
+omega_n2_2 = 5;
 omega_d2_2 = omega_n2_2*sqrt(1-xi^2);
 pC_3_2 = -xi*omega_n2_2 + 1i*omega_d2_2;
 pC_4_2 = -xi*omega_n2_2 - 1i*omega_d2_2;
 
 pC_2 = [pC_1_2 pC_2_2 pC_3_2 pC_4_2];
 
-K_2 = place(A, B_u, pC_2);  % K sarà 2x4
-%tuning dei poli fatto a buon senso...
-%usiamo la funzione che risolve il problema di trovare i guadagni che
-%mettano i poli proprio dove li vogliamo noi
+K_2 = place(A, B_u, pC_2); 
 A_c_2=A-B_u*K_2;
 
 % Definisco il sistema
@@ -1068,26 +1026,21 @@ sys_cl_2=ss(A_c_2, B_d, C, D_d);
 % Risolvo
 [x_dot_2, t_out_2, x_out_2] = lsim(sys_cl_2, w, t, x0);
 i_out_2 = (-K_2 * x_out_2')';
-% S_2_c = stepinfo(sys_cl_2(1,:));
-% S_2_p = stepinfo(sys_cl_2(2,:));
 
 % Terza coppia di frequenze (w_c = 5 e w_c = 10)
-omega_n1_3 = 5; % Determina poli dominanti, più lenti)
+omega_n1_3 = 5;
 omega_d1_3 = omega_n1_3*sqrt(1-xi^2);
 pC_1_3 = -xi*omega_n1_3 + 1i*omega_d1_3;
 pC_2_3 = -xi*omega_n1_3 - 1i*omega_d1_3;
 
-omega_n2_3 = 10; % Determina poli ausiliari,  più veloci, es. 5-10x omega_n1_1
+omega_n2_3 = 10;
 omega_d2_3 = omega_n2_3*sqrt(1-xi^2);
 pC_3_3 = -xi*omega_n2_3 + 1i*omega_d2_3;
 pC_4_3 = -xi*omega_n2_3 - 1i*omega_d2_3;
 
 pC_3 = [pC_1_3 pC_2_3 pC_3_3 pC_4_3];
 
-K_3 = place(A, B_u, pC_3);  % K sarà 2x4
-%tuning dei poli fatto a buon senso...
-%usiamo la funzione che risolve il problema di trovare i guadagni che
-%mettano i poli proprio dove li vogliamo noi
+K_3 = place(A, B_u, pC_3); 
 A_c_3=A-B_u*K_3;
 
 % Definisco il sistema
@@ -1095,8 +1048,6 @@ sys_cl_3=ss(A_c_3, B_d, C, D_d);
 
 % Risolvo
 [x_dot_3, t_out_3, x_out_3] = lsim(sys_cl_3, w, t, x0);
-% S_3_c = stepinfo(sys_cl_3(1,:));
-% S_3_p = stepinfo(sys_cl_3(2,:));
 
 % Grafico della risposta - confronto tra le tre coppie
 figure('Name', '6.2 Scelta dei poli per controllore in spazio di stato')
@@ -1128,7 +1079,7 @@ end
 
 % Posizionamento poli osservatore
 % Mantengo lo smorzamento a 0.7 (scelta ottima)
-% Primo tentativo (poli il doppio più veloci di quelli del controllore
+% Primo tentativo (poli il doppio più veloci di quelli del controllore)
 omega_n_o1_1 = omega_n1_2*2;
 omega_d_o1_1 = omega_n1_2*sqrt(1-xi^2)*2;
 pC_1_o_1 = -xi*omega_n_o1_1 + 1i*omega_d_o1_1;
@@ -1322,8 +1273,6 @@ xlabel('Time [s]');
 title('Estimation error in pendulum angle');
 grid on;
 
-
-
 figure('Name', '6.6 -  Solution with and without observer')
 subplot(3,1,1);
 plot(ex6.tout, ex6.input, 'LineWidth',2);
@@ -1351,7 +1300,6 @@ legend('With Obs', 'Without Obs');
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle with observer');
-
 
 %% TASK 7 - 
 L1 = 0.076;
@@ -1411,12 +1359,10 @@ pC1 = [pC_2, pC_elettrico1];
 pC2 = [pC_2, pC_elettrico2];
 pC3 = [pC_2, pC_elettrico3];
 
-K1 = place(A_7_1, B_7_1(:,1), pC1);  % K sarà 2x4
+K1 = place(A_7_1, B_7_1(:,1), pC1);
 K2 = place(A_7_2, B_7_2(:,1), pC2);
 K3 = place(A_7_3, B_7_3(:,1), pC3);
-%tuning dei poli fatto a buon senso...
-%usiamo la funzione che risolve il problema di trovare i guadagni che
-%mettano i poli proprio dove li vogliamo noi
+
 A_c_7_1=A_7_1-B_7_1(:,1)*K1;
 A_c_7_2=A_7_2-B_7_2(:,1)*K2;
 A_c_7_3=A_7_3-B_7_3(:,1)*K3;
@@ -1433,7 +1379,6 @@ sys_cl3=ss(A_c_7_3, B_7_3(:,2), C_7, D_d);
 v_out_1 = (-K1 * x_out_7_1')';
 v_out_2 = (-K2 * x_out_7_2')';
 v_out_3 = (-K3 * x_out_7_3')';
-
 
 figure('Name', 'Actuator dynamics - cart position')
 plot(t_out_7_2, x_out_7_2(:,1), 'LineWidth',2);
