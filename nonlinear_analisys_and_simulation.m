@@ -69,6 +69,7 @@ subplot(3, 2, 1)
 plot(tt, xcart_rif, 'k', 'LineWidth', 2);
 hold on;
 plot(t45, xcart45, 'r', 'LineWidth',2);
+grid on;
 xlabel('Time [s]');
 ylabel('Position [m]');
 legend('Benchmark solution', 'Ode45', 'Location','southeast')
@@ -78,6 +79,7 @@ subplot(3,2,2)
 plot(tt, rad2deg(theta_rif), 'k', 'LineWidth',2);
 hold on;
 plot(t45, rad2deg(theta45), 'r', 'LineWidth', 2);
+grid on;
 xlim([0, 5]);
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
@@ -89,6 +91,7 @@ subplot(3,2,3)
 plot(tt, xcart_rif, 'k', 'LineWidth', 2);
 hold on;
 plot(t23, xcart23, 'r', 'LineWidth',2);
+grid on;
 xlabel('Time [s]');
 ylabel('Position [m]');
 legend ('Benchmark solution', 'Ode23', 'Location','southeast');
@@ -98,6 +101,7 @@ subplot(3,2,4)
 plot(tt, rad2deg(theta_rif), 'k', 'LineWidth',2);
 hold on;
 plot(t23, rad2deg(theta23), 'r', 'LineWidth', 2);
+grid on;
 xlim([0, 5]);
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
@@ -109,6 +113,7 @@ subplot(3,2,5)
 plot(tt, xcart_rif, 'k', 'LineWidth', 2);
 hold on;
 plot(t78, xcart78, 'r', 'LineWidth',2);
+grid on;
 xlabel('Time [s]');
 ylabel('Cart position [m]');
 legend('Benchmark solution', 'Ode78', 'Location','southeast');
@@ -118,6 +123,7 @@ subplot(3,2,6)
 plot(tt, rad2deg(theta_rif), 'k', 'LineWidth',2);
 hold on;
 plot(t78, rad2deg(theta78), 'r', 'LineWidth', 2);
+grid on;
 xlim([0, 5]);
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
@@ -141,12 +147,14 @@ errtheta_45 = abs(theta_rif45 - theta45);
 errtheta_23 = abs(theta_rif23 - theta23);
 errtheta_78 = abs(theta_rif78 - theta78);
 
+% Grafico - errori
 figure('Name', '2.1 - Absolute Err and ET')
 subplot(3, 1, 1)
 plot(t45, err_45, 'LineWidth',2);
 hold on;
 plot(t23,err_23, 'LineWidth',2);
 plot(t78, err_78, 'LineWidth',2);
+grid on;
 legend ('err45', 'err23', 'err78');
 xlabel('Time [s]');
 ylabel('Absolute error');
@@ -157,6 +165,7 @@ plot(t45, errtheta_45, 'LineWidth',2);
 hold on;
 plot(t23, errtheta_23, 'LineWidth',2);
 plot(t78, errtheta_78, 'LineWidth', 2);
+grid on;
 xlabel('Time [s]');
 ylabel('Absolute error');
 legend ('err45', 'err23', 'err78');
@@ -173,15 +182,18 @@ xlabel('Solver');
 title('Times of execution');
 
 %% TASK 2.1 - Soluzione con Ode78
+% Grafico - soluzione
 figure('Name', '2.1 - Ode78 Solution')
 subplot(2,1,1);
 plot(t78, xcart78, 'LineWidth',2);
+grid on;
 xlabel('Time [s]');
 ylabel('Position [m]');
 title ('Cart postion x(t)');
 
 subplot(2,1,2);
 plot(t78, rad2deg(theta78), 'LineWidth',2);
+grid on;
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle \theta(t)');
@@ -218,13 +230,14 @@ xcart78_2 = x78_2(:,1);
 theta78_2 = x78_2(:,3);
 t_es_78_2 = toc;
 
-% Confronto tra risultati
+% Grafico - Confronto tra tolleranze
 figure ('Name','2.1 - Tolerance sensitivity')
 subplot(2,1,1)
 plot(t78, xcart78, 'k', 'LineWidth',2);
 hold on;
 plot(t78_1, xcart78_1, 'r', 'LineWidth',2);
 plot(t78_2, xcart78_2, 'b', 'LineWidth',2);
+grid on;
 xlabel('Time [s]');
 ylabel('Cart position [m]');
 legend('Standard tolerances', 'Tighter tolerances', 'Looser tolerances');
@@ -235,12 +248,13 @@ plot(t78, rad2deg(theta78), 'k', 'LineWidth',2);
 hold on;
 plot(t78_1, rad2deg(theta78_1), 'r', 'LineWidth',2);
 plot(t78_2, rad2deg(theta78_2), 'b', 'LineWidth',2);
+grid on;
 xlabel('Time[s]');
 ylabel('Pendulum angle [°]');
 legend('Standard tolerances', 'Tighter tolerances', 'Looser tolerances');
 title('Tolerance comparison for pendulum angle');
 
-% Tempi di esecuzione con diverse tolleranze
+% Calcolo tempi di esecuzione con diverse tolleranze
 figure('Name','2.1 - ET with Different Tol')
 t_es = [t_es_78, t_es_78_1, t_es_78_2];
 labels = {'Standard tolerances', 'Tighter tolerances', 'Looser tolerances'};
@@ -310,11 +324,12 @@ theta78_d = x78_d(:,3);
 t_es_78_d = toc;
 
 % Grafico - confronto tra riferimento e ode45
-figure('Name', '2.2 - Ode vs Benchmark with Disturb')
+figure('Name', '2.2 - Ode vs Benchmark with Disturbance')
 subplot(3, 2, 1)
 plot(tt_d, xcart_rif_d, 'k', 'LineWidth', 2);
 hold on;
 plot(t45_d, xcart45_d, 'r', 'LineWidth',2);
+grid on;
 xlabel('Time [s]');
 ylabel('Position [m]');
 legend('Benchmark solution', 'Ode45', 'Location','southeast')
@@ -324,6 +339,7 @@ subplot(3,2,2)
 plot(tt_d, rad2deg(theta_rif_d), 'k', 'LineWidth',2);
 hold on;
 plot(t45_d, rad2deg(theta45_d), 'r', 'LineWidth', 2);
+grid on;
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 legend('Benchmark solution', 'Ode45', 'Location','southeast');
@@ -334,6 +350,7 @@ subplot(3,2,3)
 plot(tt_d, xcart_rif_d, 'k', 'LineWidth', 2);
 hold on;
 plot(t23_d, xcart23_d, 'r', 'LineWidth',2);
+grid on;
 xlabel('Time [s]');
 ylabel('Position [m]');
 legend ('Benchmark solution', 'Ode23', 'Location','southeast');
@@ -343,6 +360,7 @@ subplot(3,2,4)
 plot(tt_d, rad2deg(theta_rif_d), 'k', 'LineWidth',2);
 hold on;
 plot(t23_d, rad2deg(theta23_d), 'r', 'LineWidth', 2);
+grid on;
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 legend('Benchmark solution', 'Ode23', 'Location','southeast');
@@ -353,6 +371,7 @@ subplot(3,2,5)
 plot(tt_d, xcart_rif_d, 'k', 'LineWidth', 2);
 hold on;
 plot(t78_d, xcart78_d, 'r', 'LineWidth',2);
+grid on;
 xlabel('Time [s]');
 ylabel('Cart position [m]');
 legend('Benchmark solution', 'Ode78', 'Location','southeast');
@@ -362,6 +381,7 @@ subplot(3,2,6)
 plot(tt_d, rad2deg(theta_rif_d), 'k', 'LineWidth',2);
 hold on;
 plot(t78_d, rad2deg(theta78_d), 'r', 'LineWidth', 2);
+grid on;
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 legend('Benchmark solution','Ode78', 'Location','southeast');
@@ -384,12 +404,14 @@ errtheta_45_d = abs(theta_rif45_d - theta45_d);
 errtheta_23_d = abs(theta_rif23_d - theta23_d);
 errtheta_78_d = abs(theta_rif78_d - theta78_d);
 
-figure('Name', 'Absolute Err and ET with Disturb')
+% Grafico - errori
+figure('Name', 'Absolute Err and ET with Disturbance')
 subplot(3, 1, 1)
 plot(t45_d, err_45_d, 'LineWidth',2);
 hold on;
 plot(t23_d,err_23_d, 'LineWidth',2);
 plot(t78_d, err_78_d, 'LineWidth',2);
+grid on;
 legend ('err45', 'err23', 'err78');
 xlabel('Time [s]');
 ylabel('Absolute error');
@@ -400,6 +422,7 @@ plot(t45_d, errtheta_45_d, 'LineWidth',2);
 hold on;
 plot(t23_d, errtheta_23_d, 'LineWidth',2);
 plot(t78_d, errtheta_78_d, 'LineWidth', 2);
+grid on;
 xlabel('Time [s]');
 ylabel('Absolute error');
 legend ('err45', 'err23', 'err78');
@@ -416,7 +439,7 @@ xlabel('Solver');
 title('Times of execution');
 
 %% TASK 2.2 - Soluzione con Ode23
-% Grafico del disturbo
+% Grafico - disturbo
 u_c = zeros(length(t23_d), 1);
 u_d = zeros(length(t23_d), 1);
 for i = 1 : length(t23_d)
@@ -429,16 +452,18 @@ xlabel('Time [s]');
 ylabel('Disturbance [N/m]');
 title('Disturbance');
 
-% Grafici della soluzione
-figure('Name', '2.2 - Ode23 Solution with Disturb')
+% Grafico - soluzione con disturbo
+figure('Name', '2.2 - Ode23 Solution with Disturbance')
 subplot(2,1,1);
 plot(t23_d, xcart23_d, 'LineWidth',2);
+grid on;
 xlabel('Time [s]');
 ylabel('Position [m]');
 title ('Cart postion with disturbance x(t)');
 
 subplot(2,1,2);
 plot(t23_d, rad2deg(theta23_d), 'LineWidth',2);
+grid on;
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle with disturbance \theta(t)');
@@ -476,12 +501,13 @@ theta23_2_d = x23_2_d(:,3);
 t_es_23_2_d = toc;
 
 % Confronto tra risultati
-figure ('Name', 'Tolerance sensitivity with Disturb')
+figure ('Name', 'Tolerance sensitivity with Disturbance')
 subplot(2,1,1)
 plot(t23_d, xcart23_d, 'k', 'LineWidth',2);
 hold on;
 plot(t23_1_d, xcart23_1_d, 'r', 'LineWidth',2);
 plot(t23_2_d, xcart23_2_d, 'b', 'LineWidth',2);
+grid on;
 xlabel('Time [s]');
 ylabel('Cart position [m]');
 legend('Standard tolerances', 'Tighter tolerances', 'Looser tolerances');
@@ -492,13 +518,14 @@ plot(t23_d, rad2deg(theta23_d), 'k', 'LineWidth',2);
 hold on;
 plot(t23_1_d, rad2deg(theta23_1_d), 'r', 'LineWidth',2);
 plot(t23_2_d, rad2deg(theta23_2_d), 'b', 'LineWidth',2);
+grid on;
 xlabel('Time[s]');
 ylabel('Pendulum angle [°]');
 legend('Standard tolerances', 'Tighter tolerances', 'Looser tolerances');
 title('Tolerance comparison for pendulum angle with disturbance');
 
 % Tempi di esecuzione con diverse tolleranze
-figure('Name', 'ET with different tolerances and Disturb')
+figure('Name', 'ET with different tolerances and Disturbance')
 t_es_d_t = [t_es_23_d, t_es_23_1_d, t_es_23_2_d];
 labels = {'Standard tolerances', 'Tighter tolerances', 'Looser tolerances'};
 bar(t_es_d_t);
