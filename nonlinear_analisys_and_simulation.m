@@ -576,6 +576,7 @@ plot(ex1.tout,ex1.x, 'LineWidth', 2);
 hold on
 plot(t23_d, xcart23_d, '--', 'LineWidth',2);
 hold on
+grid on;
 plot(tt_d, xcart_rif_d,'--', 'LineWidth', 2);
 title('Cart Position')
 xlabel('t(s)');
@@ -587,6 +588,7 @@ plot(ex1.tout,rad2deg(ex1.theta), 'LineWidth', 2);
 hold on
 plot(tt_d, rad2deg(theta_rif_d), '--', 'LineWidth',2);
 hold on
+grid on;
 plot(t23_d, rad2deg(theta23_d), '--', 'LineWidth', 2);
 title('Pendulum Angle')
 xlabel('t(s)');
@@ -597,6 +599,7 @@ subplot(3,1,3)
 plot(ex1.tout,ex1.disturb.Data, 'LineWidth', 2);
 hold on
 plot(t23_d, u_d, '--', 'LineWidth',2);
+grid on;
 title('Disturb')
 xlabel('t(s)');
 ylabel('Disturb (N/m)');
@@ -1086,7 +1089,7 @@ sys_cl_3=ss(A_c_3, B_d, C, D_d);
 [x_dot_3, t_out_3, x_out_3] = lsim(sys_cl_3, w, t, x0);
 
 % Grafico della risposta - confronto tra le tre coppie
-figure('Name', '6.2 Scelta dei poli per controllore in spazio di stato')
+figure('Name', '6.2 Pole placement for system control')
 subplot(1,2,1)
 plot(t_out_1, x_out_1(:,1), LineWidth=2);
 hold on;
@@ -1094,7 +1097,7 @@ plot(t_out_2, x_out_2(:,1), LineWidth=2);
 plot(t_out_3, x_out_3(:,1), 'LineWidth', 2);
 grid on;
 legend('wc = (1,2)', 'wc = (2, 5)', 'wc = (5,10)');
-title('Influenza su posizione carrello');
+title('Influence on cart position');
 
 subplot(1,2,2)
 plot(t_out_1, rad2deg(x_out_1(:,3)), LineWidth=2);
@@ -1103,7 +1106,7 @@ plot(t_out_2, rad2deg(x_out_2(:,3)), LineWidth=2);
 plot(t_out_3, rad2deg(x_out_3(:,3)), 'LineWidth', 2);
 grid on;
 legend('wc = (1,2)', 'wc = (2, 5)', 'wc = (5,10)');
-title('Influenza su angolo pendolo');
+title('Influence on pendulum angle');
 
 %% TASK 6.3 - Test di osservabilità
 O = obsv(A, C);
@@ -1197,6 +1200,7 @@ plot(t_out_o1, i_out_o1, 'LineWidth',2);
 hold on;
 plot(t_out_o2, i_out_o2, 'LineWidth',2);
 plot(t_out_o3, i_out_o3, 'LineWidth',2);
+grid on;
 legend('First try', 'Second try', 'Third try');
 xlabel('Time [s]');
 ylabel('Current [A]');
@@ -1207,6 +1211,7 @@ plot(t_out_o1, x_real_out_o1(:,1), 'LineWidth',2);
 hold on;
 plot(t_out_o2, x_real_out_o2(:,1), 'LineWidth',2);
 plot(t_out_o3, x_real_out_o3(:,1), 'LineWidth',2);
+grid on;
 legend('First try', 'Second try', 'Third try');
 xlabel('Time [s]');
 ylabel('Position [m]');
@@ -1217,6 +1222,7 @@ plot(t_out_o1, rad2deg(x_real_out_o1(:,3)), 'LineWidth',2);
 hold on;
 plot(t_out_o2, rad2deg(x_real_out_o2(:,3)), 'LineWidth',2);
 plot(t_out_o3, rad2deg(x_real_out_o3(:,3)), 'LineWidth',2);
+grid on;
 legend('First try', 'Second try', 'Third try');
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
@@ -1228,6 +1234,7 @@ plot(t_out_o1, err_c_1, 'LineWidth', 2);
 hold on;
 plot(t_out_o2, err_c_2, 'LineWidth', 2);
 plot(t_out_o3, err_c_3, 'LineWidth', 2);
+grid on;
 ylabel('Position [m]');
 xlabel('Time [s]');
 legend('First try', 'Second try', 'Third try');
@@ -1238,6 +1245,7 @@ plot(t_out_o1, err_p_1, 'LineWidth',2);
 hold on;
 plot(t_out_o2, err_p_2, 'LineWidth',2);
 plot(t_out_o3, err_p_3, 'LineWidth',2);
+grid on;
 ylabel('Pendulum angle [°]');
 xlabel('Time [s]');
 legend('First try', 'Second try', 'Third try');
@@ -1248,6 +1256,7 @@ subplot(3,1,1);
 plot(t_out_o2, i_out_o2, 'LineWidth',2);
 hold on;
 plot(t_out_2, i_out_2, 'LineWidth',2);
+grid on;
 legend('With Obs', 'Without Obs');
 xlabel('Time [s]');
 ylabel('Current [A]');
@@ -1257,6 +1266,7 @@ subplot(3,1,2);
 plot(t_out_o2, x_real_out_o2(:,1), 'LineWidth',2);
 hold on;
 plot(t_out_2, x_out_2(:,1), LineWidth=2);
+grid on;
 legend('With Obs', 'Without Obs');
 xlabel('Time [s]');
 ylabel('Position [m]');
@@ -1266,6 +1276,7 @@ subplot(3,1,3);
 plot(t_out_o2, rad2deg(x_real_out_o2(:,3)), 'LineWidth',2);
 hold on;
 plot(t_out_2, rad2deg(x_out_2(:,3)), LineWidth=2);
+grid on;
 legend('With Obs', 'Without Obs');
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
@@ -1314,6 +1325,7 @@ subplot(3,1,1);
 plot(ex6.tout, ex6.input, 'LineWidth',2);
 hold on;
 plot(t_out_2, i_out_2, 'LineWidth',2);
+grid on;
 legend('With Obs', 'Without Obs');
 xlabel('Time [s]');
 ylabel('Current [A]');
@@ -1323,6 +1335,7 @@ subplot(3,1,2);
 plot(ex6.tout, ex6.x, 'LineWidth',2);
 hold on;
 plot(t_out_2, x_out_2(:,1), LineWidth=2);
+grid on;
 legend('With Obs', 'Without Obs');
 xlabel('Time [s]');
 ylabel('Position [m]');
@@ -1332,6 +1345,7 @@ subplot(3,1,3);
 plot(ex6.tout, rad2deg(ex6.theta), 'LineWidth',2);
 hold on;
 plot(t_out_2, rad2deg(x_out_2(:,3)), LineWidth=2);
+grid on;
 legend('With Obs', 'Without Obs');
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
@@ -1417,43 +1431,57 @@ v_out_1 = (-K1 * x_out_7_1')';
 v_out_2 = (-K2 * x_out_7_2')';
 v_out_3 = (-K3 * x_out_7_3')';
 
-figure('Name', 'Actuator dynamics - cart position')
+figure('Name', '7.1 - Actuator dynamics')
+subplot(3,1,1)
 plot(t_out_7_2, x_out_7_2(:,1), 'LineWidth',2);
 hold on;
 plot (t_out_2, x_out_2(:,1), 'LineWidth', 2);
+grid on;
+title('Actuator dynamics - cart position')
 legend('Actuator', 'Non actuator');
 
-figure('Name', 'Actuator dynamics - pendulum angle')
+subplot(3,1,2)
 plot(t_out_7_2, rad2deg(x_out_7_2(:,3)), 'LineWidth', 2);
 hold on;
 plot(t_out_2, rad2deg(x_out_2(:,3)), 'LineWidth', 2);
+grid on;
+title('Actuator dynamics - pendulum angle')
 legend('Actuator', 'Non actuator');
 
-figure('Name', 'Actuator dynamics - current')
+subplot(3,1,3)
 plot(t_out_7_2, x_out_7_2(:,5), 'LineWidth', 2);
 hold on;
 plot(t_out_2, i_out_2, 'LineWidth', 2);
+grid on;
+title('Actuator dynamics - current');
 legend('Actuator', 'Non actuator');
 
-figure('Name', 'Comparison with different L - cart position')
+figure('Name', '7.1 - Comparison with different L')
+subplot(3,1,1)
 plot(t_out_7_1, x_out_7_1(:,1), 'LineWidth',2);
 hold on;
 plot (t_out_7_2, x_out_7_2(:,1), 'LineWidth', 2);
 plot (t_out_7_3, x_out_7_3(:,1), 'LineWidth', 2);
+title('Comparison with different L - cart position');
+grid on;
 legend('L1', 'L2', 'L3');
 
-figure('Name', 'Comparison with different L - pendulum angle')
+subplot(3,1,2)
 plot(t_out_7_1, rad2deg(x_out_7_1(:,3)), 'LineWidth',2);
 hold on;
 plot (t_out_7_2, rad2deg(x_out_7_2(:,3)), 'LineWidth', 2);
 plot (t_out_7_3, rad2deg(x_out_7_3(:,3)), 'LineWidth', 2);
+title('Comparison with different L - pendulum angle');
+grid on;
 legend('L1', 'L2', 'L3');
 
-figure('Name', 'Comparison with different L - current')
+subplot(3,1,3)
 plot(t_out_7_1, x_out_7_1(:,5), 'LineWidth',2);
 hold on;
 plot (t_out_7_2, x_out_7_2(:,5), 'LineWidth', 2);
 plot (t_out_7_3, x_out_7_3(:,5), 'LineWidth', 2);
+title('Comparison with different L - current');
+grid on;
 legend('L1', 'L2', 'L3');
 
 
