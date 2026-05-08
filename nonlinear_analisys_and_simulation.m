@@ -1338,6 +1338,7 @@ ylabel('Pendulum angle [°]');
 title('Pendulum angle with observer');
 
 %% TASK 7 - 
+% ---- Sistema Lineare ----
 L1 = 0.076;
 L2 = 0.76;
 L3 = 3.6;
@@ -1454,6 +1455,11 @@ hold on;
 plot (t_out_7_2, x_out_7_2(:,5), 'LineWidth', 2);
 plot (t_out_7_3, x_out_7_3(:,5), 'LineWidth', 2);
 legend('L1', 'L2', 'L3');
+
+
+% ------ Sistema Non Lineare -------
+% sistema in Simulink
+
 
 
 %% ----------------------- Definizione Funzioni ---------------------------
@@ -1591,6 +1597,34 @@ function xdot_d = invpendulumP_fd (t,x, input_fun, invpendulumP)
     xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
 end
 
+function xdot_d = invpendulumP_fd_7 (t,x, input_fun, invpendulumP,L,R)
+    I_1 = invpendulumP.I_1;
+    I_2 = invpendulumP.I_2;
+    I_0 = invpendulumP.I_0;
+    b = invpendulumP.b;
+    g = invpendulumP.g;
+    alpha_1 = invpendulumP.alpha_1;
+    c = invpendulumP.c;
+    alpha_0 = invpendulumP.alpha_0;
+    M = invpendulumP.M;
+    kt = invpendulumP.kt;
+    r = invpendulum.r;
+    [~, u_d] = input_fun(t, invpendulumP);
+
+    x1 = x(1);
+    x2 = x(2);
+    x3 = x(3);
+    x4 = x(4);
+    x5 = x(5);
+    u2 = u_d;
+
+    xdot_1 = x2;
+    xdot_2 = (-(I_1/I_2)*b*x4*cos(x3)+((I_1^2)/I_2)*g*sin(x3)*cos(x3)+(I_1/I_2)*u2*alpha_1*(cos(x3)^2)-I_1*(x4^2)*sin(x3)-c*x2+x5*(kt/r)-u2*alpha_0)/(I_0+M-(I_1^2/I_2)*(cos(x3)^2));
+    xdot_3 = x4;
+    xdot_4 = (I_1*xdot_2*cos(x3)-b*x4+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
+    xdot_5 = (v - kt*x4 - R*x5)/L;
+    xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4,xdot_5]';
+end
 % Funzione per ottenere la risposta del sistema in presenza dell'osservatore
 function dx_t = closed_loop_nonlinear(t, x_t, K, L, A, B_u,C, invpendulumP)
     x     = x_t(1:4);    % stato reale (sistema nonlineare)
