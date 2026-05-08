@@ -848,6 +848,11 @@ theta23_frictionless = x23_frictionless(:,3);
 
 ex5 = sim('simulink_nonlineare_nonattrito_closedloop.slx');
 
+% Ricalcolo dell'input PD 
+theta_rif = 0; 
+u1_feedback = kp * (theta_rif - x23_frictionless(:,3)) + kd * (-x23_frictionless(:,4));
+
+% Simulate the nonlinear model with friction and plot results
 figure('Name', '5.6 - Pendulum Angle without Friction');
 xlabel('t(s)');
 ylabel('\theta (deg)');
@@ -856,9 +861,13 @@ grid on;
 plot(t23_frictionless,rad2deg(theta23_frictionless), Linewidth=2.5);
 legend('Pendulum Angle without Friction');
 
-% Ricalcolo dell'input PD 
-theta_rif = 0; 
-u1_feedback = kp * (theta_rif - x23_frictionless(:,3)) + kd * (-x23_frictionless(:,4));
+figure('Name', '5.6 - Cart Position');
+xlabel('t(s)');
+ylabel('x (m)');
+hold on;
+grid on;
+plot(t23_frictionless, xcart23_frictionless, Linewidth=2.5);
+legend('Cart Position');
 
 figure('Name','5.6 - Input ');
 xlabel('t(s)');
@@ -867,47 +876,6 @@ hold on;
 plot(t23_frictionless, u1_feedback, Linewidth=2.5);
 grid on;
 legend('Input feedback');
-function xdot_d = invpendulumP_frictionless (t,x,kd,kp, input_fun, invpendulumP) 
-%sistema con disturbo in spazio di stato senza attriti
-
-I_1 = invpendulumP.I_1;
-I_2 = invpendulumP.I_2;
-I_0 = invpendulumP.I_0;
-g = invpendulumP.g;
-alpha_1 = invpendulumP.alpha_1;
-alpha_0 = invpendulumP.alpha_0;
-kt = invpendulumP.kt;
-r = invpendulumP.r;
-M = invpendulumP.M;
-[~ , u_d] = input_fun(t, invpendulumP);
-
-x1 = x(1);
-x2 = x(2);
-x3 = x(3);
-x4 = x(4);
-
-% inseriamo il PD all'interno della nostra funzione 
-theta_rif = 0;
-u1 =  (kp * (theta_rif - x(3)) + kd * (- x(4)))*(kt/r);
-u2 = u_d;
-
-
-xdot_1 = x2;
-xdot_2 = (((I_1^2)/I_2)*g*sin(x3)*cos(x3)+(I_1/I_2)*u2*alpha_1*(cos(x3)^2)-I_1*(x4^2)*sin(x3)+u1-u2*alpha_0)/(I_0+M-(I_1^2/I_2)*(cos(x3)^2));
-xdot_3 = x4;
-xdot_4 = (I_1*xdot_2*cos(x3)+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
-
-xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
-end
-
-% Simulate the nonlinear model with friction and plot results
-figure('Name', '5.6 - Cart Position');
-xlabel('t(s)');
-ylabel('x (m)');
-hold on;
-grid on;
-plot(t23_frictionless, xcart23_frictionless, Linewidth=2.5);
-legend('Cart Position');
 
 %nei plot e nel latex non abbiamo inserito i dati del modello simulink perchè sono
 %esattamente coincidenti con quelli di matlab, non si nota alcuna
@@ -1707,5 +1675,38 @@ function xdot_d = nonlinear_per_oss (x, u_c, d_f, invpendulumP)
     xdot_4 = (I_1*xdot_2*cos(x3)-b*x4+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
     
     xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
+end
+
+%sistema con disturbo in spazio di stato senza attriti
+function xdot_d = invpendulumP_frictionless (t,x,kd,kp, input_fun, invpendulumP) 
+
+I_1 = invpendulumP.I_1;
+I_2 = invpendulumP.I_2;
+I_0 = invpendulumP.I_0;
+g = invpendulumP.g;
+alpha_1 = invpendulumP.alpha_1;
+alpha_0 = invpendulumP.alpha_0;
+kt = invpendulumP.kt;
+r = invpendulumP.r;
+M = invpendulumP.M;
+[~ , u_d] = input_fun(t, invpendulumP);
+
+x1 = x(1);
+x2 = x(2);
+x3 = x(3);
+x4 = x(4);
+
+% inseriamo il PD all'interno della nostra funzione 
+theta_rif = 0;
+u1 =  (kp * (theta_rif - x(3)) + kd * (- x(4)))*(kt/r);
+u2 = u_d;
+
+
+xdot_1 = x2;
+xdot_2 = (((I_1^2)/I_2)*g*sin(x3)*cos(x3)+(I_1/I_2)*u2*alpha_1*(cos(x3)^2)-I_1*(x4^2)*sin(x3)+u1-u2*alpha_0)/(I_0+M-(I_1^2/I_2)*(cos(x3)^2));
+xdot_3 = x4;
+xdot_4 = (I_1*xdot_2*cos(x3)+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
+
+xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4]';
 end
 
