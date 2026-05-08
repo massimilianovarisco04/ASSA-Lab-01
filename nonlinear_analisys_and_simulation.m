@@ -964,7 +964,7 @@ grid on
 hold on;
 plot(PID.tout, PID.x, LineWidth=2);
 hold on
-plot(PID.tout, PID.current.Data, LineWidth=2);
+plot(PID.tout, PID.current, LineWidth=2);
 ylim([-15, 15]);
 xlim([0 10]);
 ylabel('\theta [Degrees] / X [m] / i [A]')
