@@ -1250,7 +1250,7 @@ xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle with observer');
 
-%% 6.6 closed loop simultion with simulink
+%% TASK 6.6 - Closed loop simultion with simulink
 
 ex6 = sim("simulink_01_compensator.slx");
 
@@ -1319,7 +1319,7 @@ xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle with observer');
 
-%% TASK 7 - 
+%% TASK 7 - Motor dynamics
 % ---- Sistema Lineare ----
 L1 = 0.076;
 L2 = 0.76;
