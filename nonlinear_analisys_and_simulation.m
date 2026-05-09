@@ -1408,24 +1408,30 @@ plot(t_out_7_2, x_out_7_2(:,1), 'LineWidth',2);
 hold on;
 plot (t_out_2, x_out_2(:,1), 'LineWidth', 2);
 grid on;
+xlabel('Time [s]');
+ylabel('Position [m]');
 title('Actuator dynamics - cart position')
-legend('Actuator', 'Non actuator');
+legend('Sys with actuator dynamics', 'Sys without actuator dynamics');
 
 subplot(3,1,2)
 plot(t_out_7_2, rad2deg(x_out_7_2(:,3)), 'LineWidth', 2);
 hold on;
 plot(t_out_2, rad2deg(x_out_2(:,3)), 'LineWidth', 2);
 grid on;
+xlabel('Time [s]');
+ylabel('Pendulum angle [°]');
 title('Actuator dynamics - pendulum angle')
-legend('Actuator', 'Non actuator');
+legend('Sys with actuator dynamics', 'Sys without actuator dynamics');
 
 subplot(3,1,3)
 plot(t_out_7_2, x_out_7_2(:,5), 'LineWidth', 2);
 hold on;
 plot(t_out_2, i_out_2, 'LineWidth', 2);
 grid on;
-title('Actuator dynamics - current');
-legend('Actuator', 'Non actuator');
+xlabel('Time [s]');
+ylabel('Current/Voltage [A]/[V]');
+title('Actuator dynamics - input');
+legend('Sys with actuator dynamics', 'Sys without actuator dynamics');
 
 % Grafici - comparison with different L
 figure('Name', '7.1 - Comparison with different L')
@@ -1434,6 +1440,8 @@ plot(t_out_7_1, x_out_7_1(:,1), 'LineWidth',2);
 hold on;
 plot (t_out_7_2, x_out_7_2(:,1), 'LineWidth', 2);
 plot (t_out_7_3, x_out_7_3(:,1), 'LineWidth', 2);
+xlabel('Time [s]');
+ylabel('Position [m]');
 title('Comparison with different L - cart position');
 grid on;
 legend('L1', 'L2', 'L3');
@@ -1443,6 +1451,8 @@ plot(t_out_7_1, rad2deg(x_out_7_1(:,3)), 'LineWidth',2);
 hold on;
 plot (t_out_7_2, rad2deg(x_out_7_2(:,3)), 'LineWidth', 2);
 plot (t_out_7_3, rad2deg(x_out_7_3(:,3)), 'LineWidth', 2);
+xlabel('Time [s]');
+ylabel('Pendulum angle [°]');
 title('Comparison with different L - pendulum angle');
 grid on;
 legend('L1', 'L2', 'L3');
@@ -1452,7 +1462,9 @@ plot(t_out_7_1, x_out_7_1(:,5), 'LineWidth',2);
 hold on;
 plot (t_out_7_2, x_out_7_2(:,5), 'LineWidth', 2);
 plot (t_out_7_3, x_out_7_3(:,5), 'LineWidth', 2);
-title('Comparison with different L - current');
+xlabel('Time [s]');
+ylabel('Voltage [V]');
+title('Comparison with different L - voltage');
 grid on;
 legend('L1', 'L2', 'L3');
 
