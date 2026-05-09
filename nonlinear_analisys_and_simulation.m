@@ -1321,10 +1321,10 @@ title('Pendulum angle with observer');
 
 %% TASK 7 - Motor dynamics
 % ---- Sistema Lineare ----
-L1 = 0.076;
-L2 = 0.76;
-L3 = 3.6;
-R = 3.6;
+L1 = 0.01;
+L2 = 0.1;
+L3 = 1;
+R = 1;
 % Matrici A e B del nuovo sistema
 A_7_1 = [0 1 0 0 0;
     0 -c/(I_0+M-(I_1^2)/I_2) ((I_1^2*g)/I_2)/(I_0+M-(I_1^2)/I_2) (-I_1*b/I_2)/(I_0+M-(I_1^2)/I_2) (kt/r)/(I_0+M-(I_1)^2/I_2);
@@ -1403,7 +1403,7 @@ v_out_3 = (-K3 * x_out_7_3')';
 
 % Grafici - actuator dynamics
 figure('Name', '7.1 - Actuator dynamics')
-subplot(3,1,1)
+subplot(2,1,1)
 plot(t_out_7_2, x_out_7_2(:,1), 'LineWidth',2);
 hold on;
 plot (t_out_2, x_out_2(:,1), 'LineWidth', 2);
@@ -1413,7 +1413,7 @@ ylabel('Position [m]');
 title('Actuator dynamics - cart position')
 legend('Sys with actuator dynamics', 'Sys without actuator dynamics');
 
-subplot(3,1,2)
+subplot(2,1,2)
 plot(t_out_7_2, rad2deg(x_out_7_2(:,3)), 'LineWidth', 2);
 hold on;
 plot(t_out_2, rad2deg(x_out_2(:,3)), 'LineWidth', 2);
@@ -1423,15 +1423,17 @@ ylabel('Pendulum angle [°]');
 title('Actuator dynamics - pendulum angle')
 legend('Sys with actuator dynamics', 'Sys without actuator dynamics');
 
-subplot(3,1,3)
-plot(t_out_7_2, x_out_7_2(:,5), 'LineWidth', 2);
-hold on;
-plot(t_out_2, i_out_2, 'LineWidth', 2);
-grid on;
-xlabel('Time [s]');
-ylabel('Current/Voltage [A]/[V]');
-title('Actuator dynamics - input');
-legend('Sys with actuator dynamics', 'Sys without actuator dynamics');
+% Io lo toglierei e anche gemini dice che non ha senso confrontare
+% grandezze diverse
+% subplot(3,1,3)
+% plot(t_out_7_2, x_out_7_2(:,5), 'LineWidth', 2);
+% hold on;
+% plot(t_out_2, i_out_2, 'LineWidth', 2);
+% grid on;
+% xlabel('Time [s]');
+% ylabel('Current/Voltage [A]/[V]');
+% title('Actuator dynamics - input');
+% legend('Sys with actuator dynamics', 'Sys without actuator dynamics');
 
 % Grafici - comparison with different L
 figure('Name', '7.1 - Comparison with different L')
@@ -1444,7 +1446,7 @@ xlabel('Time [s]');
 ylabel('Position [m]');
 title('Comparison with different L - cart position');
 grid on;
-legend('L=0.076', 'L=0.76', 'L=3.6');
+legend('L=0.01', 'L=0.1', 'L=1');
 
 subplot(3,1,2)
 plot(t_out_7_1, rad2deg(x_out_7_1(:,3)), 'LineWidth',2);
@@ -1455,7 +1457,7 @@ xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Comparison with different L - pendulum angle');
 grid on;
-legend('L=0.076', 'L=0.76', 'L=3.6');
+legend('L=0.01', 'L=0.1', 'L=1');
 
 subplot(3,1,3)
 plot(t_out_7_1, x_out_7_1(:,5), 'LineWidth',2);
@@ -1464,7 +1466,7 @@ plot (t_out_7_2, x_out_7_2(:,5), 'LineWidth', 2);
 plot (t_out_7_3, x_out_7_3(:,5), 'LineWidth', 2);
 title('Comparison with different L - current');
 grid on;
-legend('L1', 'L2', 'L3');
+legend('L=0.01', 'L=0.1', 'L=1');
 
 
 % ------ Sistema Non Lineare -------
