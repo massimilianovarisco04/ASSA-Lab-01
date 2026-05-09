@@ -1444,7 +1444,7 @@ xlabel('Time [s]');
 ylabel('Position [m]');
 title('Comparison with different L - cart position');
 grid on;
-legend('L1', 'L2', 'L3');
+legend('L=0.076', 'L=0.76', 'L=3.6');
 
 subplot(3,1,2)
 plot(t_out_7_1, rad2deg(x_out_7_1(:,3)), 'LineWidth',2);
@@ -1455,7 +1455,7 @@ xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Comparison with different L - pendulum angle');
 grid on;
-legend('L1', 'L2', 'L3');
+legend('L=0.076', 'L=0.76', 'L=3.6');
 
 subplot(3,1,3)
 plot(t_out_7_1, x_out_7_1(:,5), 'LineWidth',2);
@@ -1466,7 +1466,7 @@ xlabel('Time [s]');
 ylabel('Voltage [V]');
 title('Comparison with different L - voltage');
 grid on;
-legend('L1', 'L2', 'L3');
+legend('L=0.076', 'L=0.76', 'L=3.6');
 
 
 % ------ Sistema Non Lineare -------
