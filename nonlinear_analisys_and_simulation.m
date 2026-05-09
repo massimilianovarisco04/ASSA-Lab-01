@@ -928,7 +928,7 @@ if ki>(9.336*kp-29.32)*kd
     fprintf('il regolatore non va bene!\n');
 end
 
-PID = sim('simulink_PDI.slx');
+PID=sim('simulink_PDI.slx');
 figure('Name', 'PDI Tuned')
 plot(PID.tout, rad2deg(PID.theta), Linewidth=2);
 grid on
@@ -1250,7 +1250,7 @@ xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle with observer');
 
-%% 6.6 closed loop simulation with simulink
+%% TASK 6.6 - Closed loop simultion with simulink
 
 ex6 = sim("simulink_01_compensator.slx");
 
@@ -1319,12 +1319,13 @@ xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle with observer');
 
-%% TASK 7 - 
+%% TASK 7 - Motor dynamics
 % ---- Sistema Lineare ----
 L1 = 0.076;
 L2 = 0.76;
 L3 = 3.6;
 R = 3.6;
+% Matrici A e B del nuovo sistema
 A_7_1 = [0 1 0 0 0;
     0 -c/(I_0+M-(I_1^2)/I_2) ((I_1^2*g)/I_2)/(I_0+M-(I_1^2)/I_2) (-I_1*b/I_2)/(I_0+M-(I_1^2)/I_2) (kt/r)/(I_0+M-(I_1)^2/I_2);
     0 0 0 1 0;
@@ -1370,6 +1371,7 @@ D_7 = [0,0;0,0];
 K_7=zeros(5,1); %è il vettore dei guadagni che andremo a riempire con pole-placement
 %closed loop system matrix:
 
+% Posizionamento poli
 pC_elettrico1 = -R/L1;
 pC_elettrico2 = -R/L2;
 pC_elettrico3 = -R/L3;
@@ -1399,49 +1401,61 @@ v_out_1 = (-K1 * x_out_7_1')';
 v_out_2 = (-K2 * x_out_7_2')';
 v_out_3 = (-K3 * x_out_7_3')';
 
+% Grafici - actuator dynamics
 figure('Name', '7.1 - Actuator dynamics')
 subplot(3,1,1)
 plot(t_out_7_2, x_out_7_2(:,1), 'LineWidth',2);
 hold on;
 plot (t_out_2, x_out_2(:,1), 'LineWidth', 2);
 grid on;
+xlabel('Time [s]');
+ylabel('Position [m]');
 title('Actuator dynamics - cart position')
-legend('Actuator', 'Non actuator');
+legend('Sys with actuator dynamics', 'Sys without actuator dynamics');
 
 subplot(3,1,2)
 plot(t_out_7_2, rad2deg(x_out_7_2(:,3)), 'LineWidth', 2);
 hold on;
 plot(t_out_2, rad2deg(x_out_2(:,3)), 'LineWidth', 2);
 grid on;
+xlabel('Time [s]');
+ylabel('Pendulum angle [°]');
 title('Actuator dynamics - pendulum angle')
-legend('Actuator', 'Non actuator');
+legend('Sys with actuator dynamics', 'Sys without actuator dynamics');
 
 subplot(3,1,3)
 plot(t_out_7_2, x_out_7_2(:,5), 'LineWidth', 2);
 hold on;
 plot(t_out_2, i_out_2, 'LineWidth', 2);
 grid on;
-title('Actuator dynamics - current');
-legend('Actuator', 'Non actuator');
+xlabel('Time [s]');
+ylabel('Current/Voltage [A]/[V]');
+title('Actuator dynamics - input');
+legend('Sys with actuator dynamics', 'Sys without actuator dynamics');
 
+% Grafici - comparison with different L
 figure('Name', '7.1 - Comparison with different L')
 subplot(3,1,1)
 plot(t_out_7_1, x_out_7_1(:,1), 'LineWidth',2);
 hold on;
 plot (t_out_7_2, x_out_7_2(:,1), 'LineWidth', 2);
 plot (t_out_7_3, x_out_7_3(:,1), 'LineWidth', 2);
+xlabel('Time [s]');
+ylabel('Position [m]');
 title('Comparison with different L - cart position');
 grid on;
-legend('L1', 'L2', 'L3');
+legend('L=0.076', 'L=0.76', 'L=3.6');
 
 subplot(3,1,2)
 plot(t_out_7_1, rad2deg(x_out_7_1(:,3)), 'LineWidth',2);
 hold on;
 plot (t_out_7_2, rad2deg(x_out_7_2(:,3)), 'LineWidth', 2);
 plot (t_out_7_3, rad2deg(x_out_7_3(:,3)), 'LineWidth', 2);
+xlabel('Time [s]');
+ylabel('Pendulum angle [°]');
 title('Comparison with different L - pendulum angle');
 grid on;
-legend('L1', 'L2', 'L3');
+legend('L=0.076', 'L=0.76', 'L=3.6');
 
 subplot(3,1,3)
 plot(t_out_7_1, x_out_7_1(:,5), 'LineWidth',2);
@@ -1551,7 +1565,8 @@ plot(ex6.tout, ex6.input, 'LineWidth',2);
 grid on;
 legend('Real L1','Real L2', 'Ideal');
 xlabel('Time [s]');
-ylabel('Current [A]');
+ylabel('Voltage [V]');
+title('Comparison with different L - voltage');
 
 
 subplot(3,1,2);
@@ -1560,7 +1575,7 @@ hold on;
 plot(ex7_2.tout,ex7_2.x,'LineWidth',2);
 plot(ex6.tout, ex6.x, 'LineWidth',2);
 grid on;
-legend('Real L1','Real L2', 'Ideal');
+legend('L=0.076', 'L=0.76', 'L=3.6');
 xlabel('Time [s]');
 ylabel('Position [m]');
 
@@ -1574,6 +1589,8 @@ legend('Real L1','Real L2', 'Ideal');
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 
+% ------ Sistema Non Lineare -------
+% sistema in Simulink
 
 
 
