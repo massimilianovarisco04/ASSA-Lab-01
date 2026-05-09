@@ -1325,6 +1325,7 @@ L1 = 0.076;
 L2 = 0.76;
 L3 = 3.6;
 R = 3.6;
+% Matrici A e B del nuovo sistema
 A_7_1 = [0 1 0 0 0;
     0 -c/(I_0+M-(I_1^2)/I_2) ((I_1^2*g)/I_2)/(I_0+M-(I_1^2)/I_2) (-I_1*b/I_2)/(I_0+M-(I_1^2)/I_2) (kt/r)/(I_0+M-(I_1)^2/I_2);
     0 0 0 1 0;
@@ -1370,6 +1371,7 @@ D_7 = [0,0;0,0];
 K_7=zeros(5,1); %è il vettore dei guadagni che andremo a riempire con pole-placement
 %closed loop system matrix:
 
+% Posizionamento poli
 pC_elettrico1 = -R/L1;
 pC_elettrico2 = -R/L2;
 pC_elettrico3 = -R/L3;
@@ -1399,6 +1401,7 @@ v_out_1 = (-K1 * x_out_7_1')';
 v_out_2 = (-K2 * x_out_7_2')';
 v_out_3 = (-K3 * x_out_7_3')';
 
+% Grafici - actuator dynamics
 figure('Name', '7.1 - Actuator dynamics')
 subplot(3,1,1)
 plot(t_out_7_2, x_out_7_2(:,1), 'LineWidth',2);
@@ -1424,6 +1427,7 @@ grid on;
 title('Actuator dynamics - current');
 legend('Actuator', 'Non actuator');
 
+% Grafici - comparison with different L
 figure('Name', '7.1 - Comparison with different L')
 subplot(3,1,1)
 plot(t_out_7_1, x_out_7_1(:,1), 'LineWidth',2);
