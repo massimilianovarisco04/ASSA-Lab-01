@@ -928,7 +928,7 @@ if ki>(9.336*kp-29.32)*kd
     fprintf('il regolatore non va bene!\n');
 end
 
-PID=sim('simulink_PDI.slx');
+PID = sim('simulink_PDI.slx');
 figure('Name', 'PDI Tuned')
 plot(PID.tout, rad2deg(PID.theta), Linewidth=2);
 grid on
@@ -1250,7 +1250,7 @@ xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle with observer');
 
-%% 6.6 closed loop simultion with simulink
+%% 6.6 closed loop simulation with simulink
 
 ex6 = sim("simulink_01_compensator.slx");
 
@@ -1454,7 +1454,126 @@ legend('L1', 'L2', 'L3');
 
 
 % ------ Sistema Non Lineare -------
-% sistema in Simulink
+
+% Posizionamento poli osservatore, partendo dalla seconda scelta prima
+% derivata 
+pC_o_17 = [pC_1_o_2 pC_2_o_2 pC_3_o_2 pC_4_o_2 -R/L1];
+pC_o_27 = [pC_1_o_2 pC_2_o_2 pC_3_o_2 pC_4_o_2 -R/L2];
+pC_o_37 = [pC_1_o_2 pC_2_o_2 pC_3_o_2 pC_4_o_2 -R/L3];
+
+lT_o_17 = place(A_7_1',C_7', pC_o_17);
+lT_o_27 = place(A_7_2',C_7', pC_o_27);
+lT_o_37 = place(A_7_3',C_7', pC_o_37);
+
+L_17 = lT_o_17';
+L_27 = lT_o_27';
+L_37 = lT_o_37';
+
+ex7_1 = sim("simulink_punto7_nonlineare_1.slx");
+ex7_2 = sim("simulink_punto7_nonlineare_2.slx");
+ex7_3 = sim("simulink_punto7_nonlineare_3.slx");
+
+figure('Name', '7 - Simulink Solution')
+subplot(3,1,1);
+plot(ex7_1.tout,ex7_1.x,'LineWidth',2);
+hold on;
+plot(ex7_2.tout,ex7_2.x,'LineWidth',2);
+plot(ex7_3.tout,ex7_3.x,'LineWidth',2);
+xlabel('t(s)');
+ylabel('x(m)');
+legend('L1','L2','L3');
+grid on;
+
+subplot(3,1,2);
+plot(ex7_1.tout,ex7_1.input,'LineWidth',2);
+xlabel('t(s)');
+ylabel('I(A)');
+grid on;
+hold on;
+plot(ex7_2.tout,ex7_2.input,'LineWidth',2);
+plot(ex7_3.tout,ex7_3.input,'LineWidth',2);
+legend('L1','L2','L3');
+
+subplot(3,1,3);
+plot(ex7_1.tout,rad2deg(ex7_1.theta),'LineWidth',2);
+xlabel('t(s)');
+ylabel('\theta (deg)');
+grid on;
+hold on;
+plot(ex7_2.tout,rad2deg(ex7_2.theta),'LineWidth',2);
+plot(ex7_3.tout,rad2deg(ex7_3.theta),'LineWidth',2);
+legend('L1','L2','L3');
+
+% Vediamo subito che la terza opzione si scarta in quanto il sistema
+% diverge; continuiamo a tenere valido il primo e il secondo mostrando 
+% la differenza di andamento sia con il modello lineare reale che con il modello 
+% non lineare ideale ( senza dinamica dell'attuatore )
+figure('Name', '7 -  Solution Linearized vs Non Linearized')
+subplot(3,1,1);
+plot(ex7_1.tout, ex7_1.input, 'LineWidth',2);
+hold on;
+plot(ex7_2.tout, ex7_2.input,'LineWidth',2);
+plot(t_out_7_1, x_out_7_1(:,5), 'LineWidth',2);
+grid on;
+legend('Non Linear L1','Non Linear L2', 'Linear');
+xlabel('Time [s]');
+ylabel('Current [A]');
+title ('Current with observer');
+
+subplot(3,1,2);
+plot(ex7_1.tout, ex7_1.x, 'LineWidth',2);
+hold on;
+plot(ex7_2.tout,ex7_2.x,'LineWidth',2);
+plot(t_out_7_1, x_out_7_1(:,1), 'LineWidth',2);
+grid on;
+legend('Non Linear L1','Non Linear L2', 'Linear');
+xlabel('Time [s]');
+ylabel('Position [m]');
+title ('Cart postion with observer');
+
+subplot(3,1,3);
+plot(ex7_1.tout, rad2deg(ex7_1.theta), 'LineWidth',2);
+hold on;
+plot(ex7_2.tout,rad2deg(ex7_2.theta),'LineWidth',2);
+plot(t_out_7_1, rad2deg(x_out_7_1(:,3)), 'LineWidth',2);
+grid on;
+legend('Non Linear L1','Non Linear L2', 'Linear');
+xlabel('Time [s]');
+ylabel('Pendulum angle [°]');
+title('Pendulum angle with observer');
+
+figure('Name', '7 -  Solution Non Linearized Real vs Ideal')
+subplot(3,1,1);
+plot(ex7_1.tout, ex7_1.input, 'LineWidth',2);
+hold on;
+plot(ex7_2.tout, ex7_2.input,'LineWidth',2);
+plot(ex6.tout, ex6.input, 'LineWidth',2);
+grid on;
+legend('Real L1','Real L2', 'Ideal');
+xlabel('Time [s]');
+ylabel('Current [A]');
+
+
+subplot(3,1,2);
+plot(ex7_1.tout, ex7_1.x, 'LineWidth',2);
+hold on;
+plot(ex7_2.tout,ex7_2.x,'LineWidth',2);
+plot(ex6.tout, ex6.x, 'LineWidth',2);
+grid on;
+legend('Real L1','Real L2', 'Ideal');
+xlabel('Time [s]');
+ylabel('Position [m]');
+
+subplot(3,1,3);
+plot(ex7_1.tout, rad2deg(ex7_1.theta), 'LineWidth',2);
+hold on;
+plot(ex7_2.tout,rad2deg(ex7_2.theta),'LineWidth',2);
+plot(ex6.tout, rad2deg(ex6.theta), 'LineWidth',2);
+grid on;
+legend('Real L1','Real L2', 'Ideal');
+xlabel('Time [s]');
+ylabel('Pendulum angle [°]');
+
 
 
 
@@ -1523,6 +1642,7 @@ function [u_c, u_d] = invpendulum_input_d(t, invpendulumP)
     u_c = (kt/r)*i; 
     u_d = d_fun(t, invpendulumP);
 end
+
 
 % Funzione per descrivere il disturbo
 function d_f = d_fun(t, invpendulumP)
@@ -1605,20 +1725,21 @@ function xdot_d = invpendulumP_fd_7 (t,x, input_fun, invpendulumP,L,R)
     M = invpendulumP.M;
     kt = invpendulumP.kt;
     r = invpendulum.r;
-    [~, u_d] = input_fun(t, invpendulumP);
+    [u_c, u_d] = input_fun(t, invpendulumP);
 
     x1 = x(1);
     x2 = x(2);
     x3 = x(3);
     x4 = x(4);
     x5 = x(5);
+    u1 = u_c;
     u2 = u_d;
 
     xdot_1 = x2;
     xdot_2 = (-(I_1/I_2)*b*x4*cos(x3)+((I_1^2)/I_2)*g*sin(x3)*cos(x3)+(I_1/I_2)*u2*alpha_1*(cos(x3)^2)-I_1*(x4^2)*sin(x3)-c*x2+x5*(kt/r)-u2*alpha_0)/(I_0+M-(I_1^2/I_2)*(cos(x3)^2));
     xdot_3 = x4;
     xdot_4 = (I_1*xdot_2*cos(x3)-b*x4+I_1*g*sin(x3)+u2*alpha_1*cos(x3))/I_2;
-    xdot_5 = (v - kt*x4 - R*x5)/L;
+    xdot_5 = (u1 - kt*x4 - R*x5)/L;
     xdot_d = [xdot_1, xdot_2, xdot_3, xdot_4,xdot_5]';
 end
 % Funzione per ottenere la risposta del sistema in presenza dell'osservatore
