@@ -1423,18 +1423,6 @@ ylabel('Pendulum angle [°]');
 title('Actuator dynamics - pendulum angle')
 legend('Sys with actuator dynamics', 'Sys without actuator dynamics');
 
-% Io lo toglierei e anche gemini dice che non ha senso confrontare
-% grandezze diverse
-% subplot(3,1,3)
-% plot(t_out_7_2, x_out_7_2(:,5), 'LineWidth', 2);
-% hold on;
-% plot(t_out_2, i_out_2, 'LineWidth', 2);
-% grid on;
-% xlabel('Time [s]');
-% ylabel('Current/Voltage [A]/[V]');
-% title('Actuator dynamics - input');
-% legend('Sys with actuator dynamics', 'Sys without actuator dynamics');
-
 % Grafici - comparison with different L
 figure('Name', '7.1 - Comparison with different L')
 subplot(3,1,1)
@@ -1521,17 +1509,21 @@ plot(ex7_3.tout,rad2deg(ex7_3.theta),'LineWidth',2);
 legend('L1','L2','L3');
 
 % Vediamo subito che la terza opzione si scarta in quanto il sistema
-% diverge; continuiamo a tenere valido il primo e il secondo mostrando 
+% diverge. Ciò deriva dal fatto che stiamo usando un compensatore 
+% pensato per un sistema linearizzato, su un sistema non lineare. Il valore L3 quindi
+% non è robusto.
+% continuiamo a tenere valido il primo e il secondo mostrando 
 % la differenza di andamento sia con il modello lineare reale che con il modello 
 % non lineare ideale ( senza dinamica dell'attuatore )
+
 figure('Name', '7 -  Solution Linearized vs Non Linearized')
 subplot(3,1,1);
 plot(ex7_1.tout, ex7_1.input, 'LineWidth',2);
 hold on;
-plot(ex7_2.tout, ex7_2.input,'LineWidth',2);
+% plot(ex7_2.tout, ex7_2.input,'LineWidth',2);
 plot(t_out_7_1, x_out_7_1(:,5), 'LineWidth',2);
 grid on;
-legend('Non Linear L1','Non Linear L2', 'Linear');
+legend('Non Linear', 'Linear');
 xlabel('Time [s]');
 ylabel('Current [A]');
 title ('Current with observer');
@@ -1539,10 +1531,10 @@ title ('Current with observer');
 subplot(3,1,2);
 plot(ex7_1.tout, ex7_1.x, 'LineWidth',2);
 hold on;
-plot(ex7_2.tout,ex7_2.x,'LineWidth',2);
+% plot(ex7_2.tout,ex7_2.x,'LineWidth',2);
 plot(t_out_7_1, x_out_7_1(:,1), 'LineWidth',2);
 grid on;
-legend('Non Linear L1','Non Linear L2', 'Linear');
+legend('Non Linear', 'Linear');
 xlabel('Time [s]');
 ylabel('Position [m]');
 title ('Cart postion with observer');
@@ -1550,10 +1542,10 @@ title ('Cart postion with observer');
 subplot(3,1,3);
 plot(ex7_1.tout, rad2deg(ex7_1.theta), 'LineWidth',2);
 hold on;
-plot(ex7_2.tout,rad2deg(ex7_2.theta),'LineWidth',2);
+% plot(ex7_2.tout,rad2deg(ex7_2.theta),'LineWidth',2);
 plot(t_out_7_1, rad2deg(x_out_7_1(:,3)), 'LineWidth',2);
 grid on;
-legend('Non Linear L1','Non Linear L2', 'Linear');
+legend('Non Linear', 'Linear');
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
 title('Pendulum angle with observer');
@@ -1565,10 +1557,10 @@ hold on;
 plot(ex7_2.tout, ex7_2.input,'LineWidth',2);
 plot(ex6.tout, ex6.input, 'LineWidth',2);
 grid on;
-legend('Real L1','Real L2', 'Ideal');
+legend('L=0.01','L=0.1', 'Without Actuator Dynamics');
 xlabel('Time [s]');
 ylabel('Voltage [V]');
-title('Comparison with different L - voltage');
+title('DIfferent L values vs No actuator dynamics - Voltage');
 
 
 subplot(3,1,2);
@@ -1577,9 +1569,10 @@ hold on;
 plot(ex7_2.tout,ex7_2.x,'LineWidth',2);
 plot(ex6.tout, ex6.x, 'LineWidth',2);
 grid on;
-legend('L=0.076', 'L=0.76', 'L=3.6');
+legend('L=0.01','L=0.1','Without Actuator Dynamics');
 xlabel('Time [s]');
 ylabel('Position [m]');
+title('Cart position');
 
 subplot(3,1,3);
 plot(ex7_1.tout, rad2deg(ex7_1.theta), 'LineWidth',2);
@@ -1587,9 +1580,10 @@ hold on;
 plot(ex7_2.tout,rad2deg(ex7_2.theta),'LineWidth',2);
 plot(ex6.tout, rad2deg(ex6.theta), 'LineWidth',2);
 grid on;
-legend('Real L1','Real L2', 'Ideal');
+legend('L=0.01','L=0.1','Without Actuator Dynamics');
 xlabel('Time [s]');
 ylabel('Pendulum angle [°]');
+title('Pendulum Angle');
 
 % ------ Sistema Non Lineare -------
 % sistema in Simulink
