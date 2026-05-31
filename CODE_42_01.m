@@ -1473,9 +1473,9 @@ L_17 = lT_o_17';
 L_27 = lT_o_27';
 L_37 = lT_o_37';
 
-ex7_1 = sim("simulink_punto7_nonlineare_1.slx");
-ex7_2 = sim("simulink_punto7_nonlineare_2.slx");
-ex7_3 = sim("simulink_punto7_nonlineare_3.slx");
+ex7_1 = sim("Model_42_01_6.slx");
+ex7_2 = sim("Model_42_01_7.slx");
+ex7_3 = sim("Model_42_01_8.slx");
 
 figure('Name', '7 - Simulink Solution')
 subplot(3,1,1);
