@@ -549,7 +549,7 @@ x_0_sim = [0,0]';
 
 % grafico non lineare con simulink (3.1)
 tic;
-ex1 = sim("simulink_nonlineare_attrito_openloop.slx");
+ex1 = sim("Model_42_01_1.slx");
 t_simulink=toc;
 
 figure('Name', '3.1 - Simulink Solution')
@@ -846,7 +846,7 @@ x23_frictionless = ODEResults_obj.Solution';
 xcart23_frictionless = x23_frictionless(:,1);
 theta23_frictionless = x23_frictionless(:,3);
 
-ex5 = sim('simulink_nonlineare_nonattrito_closedloop.slx');
+ex5 = sim('Model_42_01_2.slx');
 
 % Ricalcolo dell'input PD 
 theta_rif = 0; 
@@ -885,8 +885,8 @@ legend('Input feedback');
 c = invpendulumP.c;
 b = invpendulumP.b;
 
-ex5 = sim('simulink_nonlineare_attrito.slx');
-ex5p2 = sim('simulink_nonlineare_nonattrito_closedloop.slx');
+ex5 = sim('Model_42_01_3.slx');
+ex5p2 = sim('Model_42_01_2.slx');
 
 figure('Name', '5.7 - Nonlinear Model with Friction')
 subplot(3,1,1);
@@ -928,7 +928,7 @@ if ki>(9.336*kp-29.32)*kd
     fprintf('il regolatore non va bene!\n');
 end
 
-PID=sim('simulink_PDI.slx');
+PID=sim('Model_42_01_4.slx');
 figure('Name', 'PDI Tuned')
 plot(PID.tout, rad2deg(PID.theta), Linewidth=2);
 grid on
@@ -1252,7 +1252,7 @@ title('Pendulum angle with observer');
 
 %% TASK 6.6 - Closed loop simultion with simulink
 
-ex6 = sim("simulink_01_compensator.slx");
+ex6 = sim("Model_42_01_5.slx");
 
 figure('Name', '6.6 - Simulink Solution')
 subplot(3,1,1);
