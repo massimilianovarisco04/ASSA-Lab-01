@@ -726,39 +726,6 @@ ylim([10 18.1]);
 legend('Linear', 'Non Linear', 'Location', 'southeast');
 title('Linear vs Non Linear - Pendulum angle \theta(t)');
 
-%% NON CAPISCO SE SERVE
-% grafico linearizzato con simulink
-% ex2 = sim("simulink_linearizzato_openloop.slx");
-% 
-% figure()
-% subplot(2,1,1);
-% title('Position Cart');
-% plot(ex2.tout,ex2.x_lin);
-% xlabel('t(s)');
-% ylabel('x (m)');
-% 
-% grid on;
-% subplot(2,1,2);
-% title('Pendulum Angle')
-% plot(ex2.tout,ex2.theta_lin);
-% xlabel('t(s)');
-% ylabel('\theta (deg)');
-% grid on;
-% ex3 = sim("simulink_01_nonlineare_per_confronto_con_lineare.slx");
-
-% lineare vs non lineare in simulink
-
-% figure()
-% plot(ex3.tout,rad2deg(ex3.theta));
-% hold on
-% grid on
-% plot(ex2.tout,rad2deg(ex2.theta_lin));
-% xlim([0 0.7]);
-% ylim([0 20]);
-% legend("non linear","linear");
-% xlabel('t(s)');
-% ylabel('\theta (deg)');
-
 %% TASK 4.3 - Modello lineare in spazio di stato senza attriti
 c = 0;
 b = 0;
